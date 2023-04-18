@@ -1,0 +1,4 @@
+go.sum
+db.go
+models.go
+db/sqlc/*.sql.go
