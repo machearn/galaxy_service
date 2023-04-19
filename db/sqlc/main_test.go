@@ -6,13 +6,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/machearn/galaxy/util"
+	"github.com/machearn/galaxy_service/util"
 
 	_ "github.com/lib/pq"
 )
 
 var testQueries *Queries
-var row_index int32 = 0
 
 func TestMain(m *testing.M) {
 	config, err := util.LoadConfig("../..")

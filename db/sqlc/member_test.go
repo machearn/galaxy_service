@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/machearn/galaxy/util"
+	"github.com/machearn/galaxy_service/util"
 	"github.com/stretchr/testify/require"
 )
 
-func CreateRandomRow(t *testing.T) Member {
+func CreateRandomMember(t *testing.T) Member {
 	arg := CreateMemberParams{
 		Username:  util.GetRandomString(5),
 		Fullname:  util.GetRandomString(10),
@@ -36,17 +36,15 @@ func CreateRandomRow(t *testing.T) Member {
 
 	require.NotZero(t, member.ID)
 
-	row_index++
-
 	return member
 }
 
 func TestCreatMember(t *testing.T) {
-	CreateRandomRow(t)
+	CreateRandomMember(t)
 }
 
 func TestGetMember(t *testing.T) {
-	member := CreateRandomRow(t)
+	member := CreateRandomMember(t)
 
 	member2, err := testQueries.GetMember(context.Background(), member.ID)
 
@@ -66,16 +64,15 @@ func TestGetMember(t *testing.T) {
 
 func TestListMembers(t *testing.T) {
 	var members []Member
-	offset := row_index
 	for i := 0; i < 10; i++ {
-		member := CreateRandomRow(t)
+		member := CreateRandomMember(t)
 
 		members = append(members, member)
 	}
 
 	args := ListMembersParams{
 		Limit:  5,
-		Offset: offset,
+		Offset: 2,
 	}
 
 	members2, err := testQueries.ListMembers(context.Background(), args)
@@ -99,16 +96,16 @@ func TestListMembers(t *testing.T) {
 }
 
 func TestUpdateMember(t *testing.T) {
-	member := CreateRandomRow(t)
+	member := CreateRandomMember(t)
 
 	arg2 := UpdateMemberParams{
 		ID:        member.ID,
-		Username:  sql.NullString{util.GetRandomString(5), true},
-		Fullname:  sql.NullString{util.GetRandomString(10), true},
-		Email:     sql.NullString{util.GetRandomString(10) + "@gmail.com", true},
-		Plan:      sql.NullInt32{int32(util.GetRandomInt(1, 3)), true},
-		ExpiredAt: sql.NullTime{time.Now().AddDate(0, 0, 30).UTC(), true},
-		AutoRenew: sql.NullBool{false, true},
+		Username:  sql.NullString{String: util.GetRandomString(5), Valid: true},
+		Fullname:  sql.NullString{String: util.GetRandomString(10), Valid: true},
+		Email:     sql.NullString{String: util.GetRandomString(10) + "@gmail.com", Valid: true},
+		Plan:      sql.NullInt32{Int32: int32(util.GetRandomInt(1, 3)), Valid: true},
+		ExpiredAt: sql.NullTime{Time: time.Now().AddDate(0, 0, 30).UTC(), Valid: true},
+		AutoRenew: sql.NullBool{Bool: false, Valid: true},
 	}
 
 	member2, err := testQueries.UpdateMember(context.Background(), arg2)
@@ -125,13 +122,13 @@ func TestUpdateMember(t *testing.T) {
 }
 
 func TestPartionUpdateMember(t *testing.T) {
-	member := CreateRandomRow(t)
+	member := CreateRandomMember(t)
 
 	arg2 := UpdateMemberParams{
 		ID:       member.ID,
-		Username: sql.NullString{util.GetRandomString(5), true},
-		Email:    sql.NullString{util.GetRandomString(10) + "@gmail.com", true},
-		Plan:     sql.NullInt32{int32(util.GetRandomInt(1, 3)), true},
+		Username: sql.NullString{String: util.GetRandomString(5), Valid: true},
+		Email:    sql.NullString{String: util.GetRandomString(10) + "@gmail.com", Valid: true},
+		Plan:     sql.NullInt32{Int32: int32(util.GetRandomInt(1, 3)), Valid: true},
 	}
 
 	member2, err := testQueries.UpdateMember(context.Background(), arg2)
@@ -145,7 +142,7 @@ func TestPartionUpdateMember(t *testing.T) {
 }
 
 func TestDeleteMember(t *testing.T) {
-	member := CreateRandomRow(t)
+	member := CreateRandomMember(t)
 
 	err := testQueries.DeleteMember(context.Background(), member.ID)
 
