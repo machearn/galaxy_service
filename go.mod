@@ -1,4 +1,4 @@
-module github.com/machearn/galaxy
+module github.com/machearn/galaxy_service
 
 go 1.20
 
