@@ -1,6 +1,9 @@
 -- name: GetMember :one
 SELECT * FROM members WHERE id = $1 LIMIT 1;
 
+-- name: GetMemberByName :one
+SELECT * FROM members WHERE username = $1 LIMIT 1;
+
 -- name: ListMembers :many
 SELECT * FROM members
 ORDER BY id

@@ -7,6 +7,20 @@ ORDER BY id
 LIMIT $1
 OFFSET $2;
 
+-- name: ListEntriesByMember :many
+SELECT * FROM entries
+WHERE member_id = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3;
+
+-- name: ListEntriesByItem :many
+SELECT * FROM entries
+WHERE item_id = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3;
+
 -- name: CreateEntry :one
 INSERT INTO entries (
   member_id, item_id, quantity, total, created_at
