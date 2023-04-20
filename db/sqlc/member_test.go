@@ -62,6 +62,25 @@ func TestGetMember(t *testing.T) {
 	require.NotZero(t, member2.ID)
 }
 
+func TestGetMemberByName(t *testing.T) {
+	member := CreateRandomMember(t)
+
+	member2, err := testQueries.GetMemberByName(context.Background(), member.Username)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, member2)
+
+	require.Equal(t, member.Username, member2.Username)
+	require.Equal(t, member.Fullname, member2.Fullname)
+	require.Equal(t, member.Email, member2.Email)
+	require.Equal(t, member.Plan, member2.Plan)
+	require.Equal(t, member.CreatedAt.UTC(), member2.CreatedAt.UTC())
+	require.Equal(t, member.ExpiredAt.UTC(), member2.ExpiredAt.UTC())
+	require.Equal(t, member.AutoRenew, member2.AutoRenew)
+
+	require.NotZero(t, member2.ID)
+}
+
 func TestListMembers(t *testing.T) {
 	var members []Member
 	for i := 0; i < 10; i++ {
