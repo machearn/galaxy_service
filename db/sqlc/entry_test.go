@@ -19,7 +19,7 @@ func CreateRandomEntry(t *testing.T) Entry {
 		ItemID:    item.ID,
 		Quantity:  int32(util.GetRandomInt(10, 100)),
 		Total:     int32(util.GetRandomInt(10, 1000)),
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().Truncate(time.Second),
 	}
 
 	entry, err := testQueries.CreateEntry(context.Background(), arg)
@@ -46,7 +46,7 @@ func CreateRandomEntryByMemberID(t *testing.T, memberID int32) Entry {
 		ItemID:    item.ID,
 		Quantity:  int32(util.GetRandomInt(10, 100)),
 		Total:     int32(util.GetRandomInt(10, 1000)),
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().Truncate(time.Second),
 	}
 
 	entry, err := testQueries.CreateEntry(context.Background(), arg)
@@ -73,7 +73,7 @@ func CreateRandomEntryByItemID(t *testing.T, itemID int32) Entry {
 		ItemID:    itemID,
 		Quantity:  int32(util.GetRandomInt(10, 100)),
 		Total:     int32(util.GetRandomInt(10, 1000)),
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().Truncate(time.Second),
 	}
 
 	entry, err := testQueries.CreateEntry(context.Background(), arg)
@@ -219,7 +219,7 @@ func TestUpdateEntry(t *testing.T) {
 		ItemID:    sql.NullInt32{Int32: int32(util.GetRandomInt(1, 100)), Valid: true},
 		Quantity:  sql.NullInt32{Int32: int32(util.GetRandomInt(10, 100)), Valid: true},
 		Total:     sql.NullInt32{Int32: int32(util.GetRandomInt(10, 1000)), Valid: true},
-		CreatedAt: sql.NullTime{Time: time.Now().UTC(), Valid: true},
+		CreatedAt: sql.NullTime{Time: time.Now().UTC().Truncate(time.Second), Valid: true},
 	}
 
 	entry2, err := testQueries.UpdateEntry(context.Background(), arg)
@@ -232,7 +232,7 @@ func TestUpdateEntry(t *testing.T) {
 	require.Equal(t, arg.ItemID.Int32, entry2.ItemID)
 	require.Equal(t, arg.Quantity.Int32, entry2.Quantity)
 	require.Equal(t, arg.Total.Int32, entry2.Total)
-	require.Equal(t, arg.CreatedAt.Time.UTC(), entry2.CreatedAt.UTC())
+	require.Equal(t, arg.CreatedAt.Time, entry2.CreatedAt.UTC())
 
 	require.NotZero(t, entry2.ID)
 }

@@ -16,8 +16,8 @@ func CreateRandomMember(t *testing.T) Member {
 		Fullname:  util.GetRandomString(10),
 		Email:     util.GetRandomString(10) + "@gmail.com",
 		Plan:      int32(util.GetRandomInt(1, 3)),
-		CreatedAt: time.Now().UTC(),
-		ExpiredAt: time.Now().AddDate(0, 0, 30).UTC(),
+		CreatedAt: time.Now().UTC().Truncate(time.Second),
+		ExpiredAt: time.Now().AddDate(0, 0, 30).UTC().Truncate(time.Second),
 		AutoRenew: true,
 	}
 
@@ -126,7 +126,7 @@ func TestUpdateMember(t *testing.T) {
 		Fullname:  sql.NullString{String: util.GetRandomString(10), Valid: true},
 		Email:     sql.NullString{String: util.GetRandomString(10) + "@gmail.com", Valid: true},
 		Plan:      sql.NullInt32{Int32: int32(util.GetRandomInt(1, 3)), Valid: true},
-		ExpiredAt: sql.NullTime{Time: time.Now().AddDate(0, 0, 30).UTC(), Valid: true},
+		ExpiredAt: sql.NullTime{Time: time.Now().AddDate(0, 0, 30).UTC().Truncate(time.Second), Valid: true},
 		AutoRenew: sql.NullBool{Bool: false, Valid: true},
 	}
 
@@ -139,7 +139,7 @@ func TestUpdateMember(t *testing.T) {
 	require.Equal(t, arg2.Fullname.String, member2.Fullname)
 	require.Equal(t, arg2.Email.String, member2.Email)
 	require.Equal(t, arg2.Plan.Int32, member2.Plan)
-	require.Equal(t, arg2.ExpiredAt.Time.UTC(), member2.ExpiredAt.UTC())
+	require.Equal(t, arg2.ExpiredAt.Time, member2.ExpiredAt.UTC())
 	require.Equal(t, arg2.AutoRenew.Bool, member2.AutoRenew)
 }
 

@@ -20,7 +20,7 @@ func TestListEntriesByMember(t *testing.T) {
 		ItemID:    item.ID,
 		Quantity:  int32(util.GetRandomInt(1, 1000)),
 		Total:     int32(util.GetRandomInt(1, 1000)),
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().Truncate(time.Second),
 	}
 
 	entry, err := testQueries.CreateEntry(context.Background(), arg)
