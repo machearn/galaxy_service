@@ -36,6 +36,8 @@ func CreateRandomMember(t *testing.T) Member {
 
 	require.NotZero(t, member.ID)
 
+	member_row++
+
 	return member
 }
 
@@ -82,6 +84,7 @@ func TestGetMemberByName(t *testing.T) {
 }
 
 func TestListMembers(t *testing.T) {
+	var offset = member_row
 	var members []Member
 	for i := 0; i < 10; i++ {
 		member := CreateRandomMember(t)
@@ -91,7 +94,7 @@ func TestListMembers(t *testing.T) {
 
 	args := ListMembersParams{
 		Limit:  5,
-		Offset: 2,
+		Offset: offset,
 	}
 
 	members2, err := testQueries.ListMembers(context.Background(), args)

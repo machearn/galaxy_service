@@ -27,6 +27,8 @@ func CreateRandomItem(t *testing.T) Item {
 
 	require.NotZero(t, item.ID)
 
+	item_row++
+
 	return item
 }
 
@@ -50,6 +52,7 @@ func TestGetItem(t *testing.T) {
 }
 
 func TestListItems(t *testing.T) {
+	var offset int32 = item_row
 	var items []Item
 	for i := 0; i < 10; i++ {
 		item := CreateRandomItem(t)
@@ -59,7 +62,7 @@ func TestListItems(t *testing.T) {
 
 	arg := ListItemsParams{
 		Limit:  5,
-		Offset: 2,
+		Offset: offset,
 	}
 
 	items2, err := testQueries.ListItems(context.Background(), arg)

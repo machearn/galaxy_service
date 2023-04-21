@@ -13,6 +13,8 @@ import (
 
 var testQueries *Queries
 var testDB *sql.DB
+var member_row int32 = 0
+var item_row int32 = 0
 
 func TestMain(m *testing.M) {
 	config, err := util.LoadConfig("../..")
