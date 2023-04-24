@@ -11,9 +11,9 @@ import (
 
 func CreateRandomItem(t *testing.T) Item {
 	arg := CreateItemParams{
-		Name:   util.GetRandomString(5),
-		Amount: int32(util.GetRandomInt(10, 1000)),
-		Price:  int32(util.GetRandomInt(1000, 10000000)),
+		Name:     util.GetRandomString(5),
+		Quantity: int32(util.GetRandomInt(10, 1000)),
+		Price:    int32(util.GetRandomInt(1000, 10000000)),
 	}
 
 	item, err := testQueries.CreateItem(context.Background(), arg)
@@ -22,7 +22,7 @@ func CreateRandomItem(t *testing.T) Item {
 	require.NotEmpty(t, item)
 
 	require.Equal(t, arg.Name, item.Name)
-	require.Equal(t, arg.Amount, item.Amount)
+	require.Equal(t, arg.Quantity, item.Quantity)
 	require.Equal(t, arg.Price, item.Price)
 
 	require.NotZero(t, item.ID)
@@ -45,7 +45,7 @@ func TestGetItem(t *testing.T) {
 	require.NotEmpty(t, item2)
 
 	require.Equal(t, item.Name, item2.Name)
-	require.Equal(t, item.Amount, item2.Amount)
+	require.Equal(t, item.Quantity, item2.Quantity)
 	require.Equal(t, item.Price, item2.Price)
 
 	require.NotZero(t, item2.ID)
@@ -76,7 +76,7 @@ func TestListItems(t *testing.T) {
 		require.NotEmpty(t, item)
 
 		require.Equal(t, items[index].Name, item.Name)
-		require.Equal(t, items[index].Amount, item.Amount)
+		require.Equal(t, items[index].Quantity, item.Quantity)
 		require.Equal(t, items[index].Price, item.Price)
 
 		require.NotZero(t, item.ID)
@@ -87,10 +87,10 @@ func TestUpdateItem(t *testing.T) {
 	item := CreateRandomItem(t)
 
 	arg := UpdateItemParams{
-		ID:     item.ID,
-		Name:   sql.NullString{String: util.GetRandomString(5), Valid: true},
-		Amount: sql.NullInt32{Int32: int32(util.GetRandomInt(10, 1000)), Valid: true},
-		Price:  sql.NullInt32{Int32: int32(util.GetRandomInt(1000, 10000000)), Valid: true},
+		ID:       item.ID,
+		Name:     sql.NullString{String: util.GetRandomString(5), Valid: true},
+		Quantity: sql.NullInt32{Int32: int32(util.GetRandomInt(10, 1000)), Valid: true},
+		Price:    sql.NullInt32{Int32: int32(util.GetRandomInt(1000, 10000000)), Valid: true},
 	}
 
 	item2, err := testQueries.UpdateItem(context.Background(), arg)
@@ -99,7 +99,7 @@ func TestUpdateItem(t *testing.T) {
 	require.NotEmpty(t, item2)
 
 	require.Equal(t, arg.Name.String, item2.Name)
-	require.Equal(t, arg.Amount.Int32, item2.Amount)
+	require.Equal(t, arg.Quantity.Int32, item2.Quantity)
 	require.Equal(t, arg.Price.Int32, item2.Price)
 
 	require.NotZero(t, item2.ID)
@@ -109,8 +109,8 @@ func TestPatialUpdateItem(t *testing.T) {
 	item := CreateRandomItem(t)
 
 	arg := UpdateItemParams{
-		ID:     item.ID,
-		Amount: sql.NullInt32{Int32: int32(util.GetRandomInt(10, 1000)), Valid: true},
+		ID:       item.ID,
+		Quantity: sql.NullInt32{Int32: int32(util.GetRandomInt(10, 1000)), Valid: true},
 	}
 
 	item2, err := testQueries.UpdateItem(context.Background(), arg)
@@ -118,7 +118,7 @@ func TestPatialUpdateItem(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, item2)
 
-	require.Equal(t, arg.Amount.Int32, item2.Amount)
+	require.Equal(t, arg.Quantity.Int32, item2.Quantity)
 
 	require.NotZero(t, item2.ID)
 }
