@@ -19,9 +19,9 @@ type Entry struct {
 }
 
 type Item struct {
-	ID     int32  `json:"id"`
-	Name   string `json:"name"`
-	Amount int32  `json:"amount"`
+	ID       int32  `json:"id"`
+	Name     string `json:"name"`
+	Quantity int32  `json:"quantity"`
 	// cent unit
 	Price int32 `json:"price"`
 }

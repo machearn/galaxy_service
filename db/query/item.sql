@@ -9,7 +9,7 @@ OFFSET $2;
 
 -- name: CreateItem :one
 INSERT INTO items (
-  name, amount, price
+  name, quantity, price
 ) VALUES (
   $1, $2, $3
 ) RETURNING *;
@@ -17,7 +17,7 @@ INSERT INTO items (
 -- name: UpdateItem :one
 UPDATE items SET
   name = coalesce(sqlc.narg('name'), name),
-  amount = coalesce(sqlc.narg('amount'), amount),
+  quantity = coalesce(sqlc.narg('quantity'), quantity),
   price = coalesce(sqlc.narg('price'), price)
 WHERE id = @id
 RETURNING *;

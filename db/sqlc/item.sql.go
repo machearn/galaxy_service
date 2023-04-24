@@ -12,25 +12,25 @@ import (
 
 const createItem = `-- name: CreateItem :one
 INSERT INTO items (
-  name, amount, price
+  name, quantity, price
 ) VALUES (
   $1, $2, $3
-) RETURNING id, name, amount, price
+) RETURNING id, name, quantity, price
 `
 
 type CreateItemParams struct {
-	Name   string `json:"name"`
-	Amount int32  `json:"amount"`
-	Price  int32  `json:"price"`
+	Name     string `json:"name"`
+	Quantity int32  `json:"quantity"`
+	Price    int32  `json:"price"`
 }
 
 func (q *Queries) CreateItem(ctx context.Context, arg CreateItemParams) (Item, error) {
-	row := q.db.QueryRowContext(ctx, createItem, arg.Name, arg.Amount, arg.Price)
+	row := q.db.QueryRowContext(ctx, createItem, arg.Name, arg.Quantity, arg.Price)
 	var i Item
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Amount,
+		&i.Quantity,
 		&i.Price,
 	)
 	return i, err
@@ -46,7 +46,7 @@ func (q *Queries) DeleteItem(ctx context.Context, id int32) error {
 }
 
 const getItem = `-- name: GetItem :one
-SELECT id, name, amount, price FROM items WHERE id = $1 LIMIT 1
+SELECT id, name, quantity, price FROM items WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetItem(ctx context.Context, id int32) (Item, error) {
@@ -55,14 +55,14 @@ func (q *Queries) GetItem(ctx context.Context, id int32) (Item, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Amount,
+		&i.Quantity,
 		&i.Price,
 	)
 	return i, err
 }
 
 const listItems = `-- name: ListItems :many
-SELECT id, name, amount, price FROM items
+SELECT id, name, quantity, price FROM items
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -85,7 +85,7 @@ func (q *Queries) ListItems(ctx context.Context, arg ListItemsParams) ([]Item, e
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
-			&i.Amount,
+			&i.Quantity,
 			&i.Price,
 		); err != nil {
 			return nil, err
@@ -104,23 +104,23 @@ func (q *Queries) ListItems(ctx context.Context, arg ListItemsParams) ([]Item, e
 const updateItem = `-- name: UpdateItem :one
 UPDATE items SET
   name = coalesce($1, name),
-  amount = coalesce($2, amount),
+  quantity = coalesce($2, quantity),
   price = coalesce($3, price)
 WHERE id = $4
-RETURNING id, name, amount, price
+RETURNING id, name, quantity, price
 `
 
 type UpdateItemParams struct {
-	Name   sql.NullString `json:"name"`
-	Amount sql.NullInt32  `json:"amount"`
-	Price  sql.NullInt32  `json:"price"`
-	ID     int32          `json:"id"`
+	Name     sql.NullString `json:"name"`
+	Quantity sql.NullInt32  `json:"quantity"`
+	Price    sql.NullInt32  `json:"price"`
+	ID       int32          `json:"id"`
 }
 
 func (q *Queries) UpdateItem(ctx context.Context, arg UpdateItemParams) (Item, error) {
 	row := q.db.QueryRowContext(ctx, updateItem,
 		arg.Name,
-		arg.Amount,
+		arg.Quantity,
 		arg.Price,
 		arg.ID,
 	)
@@ -128,7 +128,7 @@ func (q *Queries) UpdateItem(ctx context.Context, arg UpdateItemParams) (Item, e
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Amount,
+		&i.Quantity,
 		&i.Price,
 	)
 	return i, err
