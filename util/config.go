@@ -6,7 +6,6 @@ import (
 
 // Config is a struct that holds the configuration for the application.
 type Config struct {
-	// Database holds the database configuration.
 	DBDriver      string `mapstructure:"DB_DRIVER"`
 	DBSource      string `mapstructure:"DB_SOURCE"`
 	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
