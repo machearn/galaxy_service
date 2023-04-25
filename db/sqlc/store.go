@@ -8,13 +8,13 @@ import (
 
 type Store struct {
 	db      *sql.DB
-	queries *Queries
+	Queries *Queries
 }
 
 func NewStore(db *sql.DB) *Store {
 	return &Store{
 		db:      db,
-		queries: New(db),
+		Queries: New(db),
 	}
 }
 

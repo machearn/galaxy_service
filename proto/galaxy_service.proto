@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+import "rpc_create_item.proto";
+import "rpc_query_item.proto";
+import "rpc_update_item.proto";
+import "rpc_delete_item.proto";
+
+option go_package = "github.com/machearn/galaxy_service/pb";
+
+service Galaxy {
+    rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {}
+    rpc GetItem(GetItemRequest) returns (GetItemResponse) {}
+    rpc ListItems(ListItemsRequest) returns (ListItemsResponse) {}
+    rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {}
+    rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {}
+}
