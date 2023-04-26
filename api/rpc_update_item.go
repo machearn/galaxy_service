@@ -35,7 +35,7 @@ func (server *Server) UpdateItem(ctx context.Context, req *pb.UpdateItemRequest)
 		}
 	}
 
-	item, err := server.store.Queries.UpdateItem(ctx, arg)
+	item, err := server.store.UpdateItem(ctx, arg)
 	if err != nil {
 		log.Print("cannot update item: ", err)
 		return nil, err

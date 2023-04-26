@@ -3,6 +3,7 @@ module github.com/machearn/galaxy_service
 go 1.20
 
 require (
+	github.com/golang/mock v1.6.0
 	github.com/lib/pq v1.10.8
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
