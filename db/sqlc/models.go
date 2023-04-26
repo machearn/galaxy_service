@@ -6,6 +6,8 @@ package db
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Entry struct {
@@ -35,4 +37,16 @@ type Member struct {
 	CreatedAt time.Time `json:"created_at"`
 	ExpiredAt time.Time `json:"expired_at"`
 	AutoRenew bool      `json:"auto_renew"`
+	Password  string    `json:"password"`
+}
+
+type Session struct {
+	ID        uuid.UUID `json:"id"`
+	MemberID  int32     `json:"member_id"`
+	Token     string    `json:"token"`
+	ClientIp  string    `json:"client_ip"`
+	UserAgent string    `json:"user_agent"`
+	IsActive  bool      `json:"is_active"`
+	CreatedAt time.Time `json:"created_at"`
+	ExpiredAt time.Time `json:"expired_at"`
 }

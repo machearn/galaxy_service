@@ -12,6 +12,7 @@ type Querier interface {
 	CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry, error)
 	CreateItem(ctx context.Context, arg CreateItemParams) (Item, error)
 	CreateMember(ctx context.Context, arg CreateMemberParams) (Member, error)
+	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	DeleteEntry(ctx context.Context, id int32) error
 	DeleteItem(ctx context.Context, id int32) error
 	DeleteMember(ctx context.Context, id int32) error

@@ -13,16 +13,17 @@ import (
 
 const createMember = `-- name: CreateMember :one
 INSERT INTO members (
-  username, fullname, email, plan, created_at, expired_at, auto_renew
+  username, fullname, email, password, plan, created_at, expired_at, auto_renew
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
-) RETURNING id, username, fullname, email, plan, created_at, expired_at, auto_renew
+  $1, $2, $3, $4, $5, $6, $7, $8
+) RETURNING id, username, fullname, email, plan, created_at, expired_at, auto_renew, password
 `
 
 type CreateMemberParams struct {
 	Username  string    `json:"username"`
 	Fullname  string    `json:"fullname"`
 	Email     string    `json:"email"`
+	Password  string    `json:"password"`
 	Plan      int32     `json:"plan"`
 	CreatedAt time.Time `json:"created_at"`
 	ExpiredAt time.Time `json:"expired_at"`
@@ -34,6 +35,7 @@ func (q *Queries) CreateMember(ctx context.Context, arg CreateMemberParams) (Mem
 		arg.Username,
 		arg.Fullname,
 		arg.Email,
+		arg.Password,
 		arg.Plan,
 		arg.CreatedAt,
 		arg.ExpiredAt,
@@ -49,6 +51,7 @@ func (q *Queries) CreateMember(ctx context.Context, arg CreateMemberParams) (Mem
 		&i.CreatedAt,
 		&i.ExpiredAt,
 		&i.AutoRenew,
+		&i.Password,
 	)
 	return i, err
 }
@@ -63,7 +66,7 @@ func (q *Queries) DeleteMember(ctx context.Context, id int32) error {
 }
 
 const getMember = `-- name: GetMember :one
-SELECT id, username, fullname, email, plan, created_at, expired_at, auto_renew FROM members WHERE id = $1 LIMIT 1
+SELECT id, username, fullname, email, plan, created_at, expired_at, auto_renew, password FROM members WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetMember(ctx context.Context, id int32) (Member, error) {
@@ -78,12 +81,13 @@ func (q *Queries) GetMember(ctx context.Context, id int32) (Member, error) {
 		&i.CreatedAt,
 		&i.ExpiredAt,
 		&i.AutoRenew,
+		&i.Password,
 	)
 	return i, err
 }
 
 const getMemberByName = `-- name: GetMemberByName :one
-SELECT id, username, fullname, email, plan, created_at, expired_at, auto_renew FROM members WHERE username = $1 LIMIT 1
+SELECT id, username, fullname, email, plan, created_at, expired_at, auto_renew, password FROM members WHERE username = $1 LIMIT 1
 `
 
 func (q *Queries) GetMemberByName(ctx context.Context, username string) (Member, error) {
@@ -98,12 +102,13 @@ func (q *Queries) GetMemberByName(ctx context.Context, username string) (Member,
 		&i.CreatedAt,
 		&i.ExpiredAt,
 		&i.AutoRenew,
+		&i.Password,
 	)
 	return i, err
 }
 
 const listMembers = `-- name: ListMembers :many
-SELECT id, username, fullname, email, plan, created_at, expired_at, auto_renew FROM members
+SELECT id, username, fullname, email, plan, created_at, expired_at, auto_renew, password FROM members
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -132,6 +137,7 @@ func (q *Queries) ListMembers(ctx context.Context, arg ListMembersParams) ([]Mem
 			&i.CreatedAt,
 			&i.ExpiredAt,
 			&i.AutoRenew,
+			&i.Password,
 		); err != nil {
 			return nil, err
 		}
@@ -151,17 +157,19 @@ UPDATE members SET
   username = coalesce($1, username),
   fullname = coalesce($2, fullname),
   email = coalesce($3, email),
-  plan = coalesce($4, plan),
-  expired_at = coalesce($5, expired_at),
-  auto_renew = coalesce($6, auto_renew)
-WHERE id = $7
-RETURNING id, username, fullname, email, plan, created_at, expired_at, auto_renew
+  password = coalesce($4, password),
+  plan = coalesce($5, plan),
+  expired_at = coalesce($6, expired_at),
+  auto_renew = coalesce($7, auto_renew)
+WHERE id = $8
+RETURNING id, username, fullname, email, plan, created_at, expired_at, auto_renew, password
 `
 
 type UpdateMemberParams struct {
 	Username  sql.NullString `json:"username"`
 	Fullname  sql.NullString `json:"fullname"`
 	Email     sql.NullString `json:"email"`
+	Password  sql.NullString `json:"password"`
 	Plan      sql.NullInt32  `json:"plan"`
 	ExpiredAt sql.NullTime   `json:"expired_at"`
 	AutoRenew sql.NullBool   `json:"auto_renew"`
@@ -173,6 +181,7 @@ func (q *Queries) UpdateMember(ctx context.Context, arg UpdateMemberParams) (Mem
 		arg.Username,
 		arg.Fullname,
 		arg.Email,
+		arg.Password,
 		arg.Plan,
 		arg.ExpiredAt,
 		arg.AutoRenew,
@@ -188,6 +197,7 @@ func (q *Queries) UpdateMember(ctx context.Context, arg UpdateMemberParams) (Mem
 		&i.CreatedAt,
 		&i.ExpiredAt,
 		&i.AutoRenew,
+		&i.Password,
 	)
 	return i, err
 }
