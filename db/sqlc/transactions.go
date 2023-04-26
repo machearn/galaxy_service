@@ -8,7 +8,7 @@ type ListEntriesByMemberTxParams struct {
 	Offset   int32
 }
 
-func (store *Store) ListEntriesByMemberTx(ctx context.Context, arg ListEntriesByMemberTxParams) ([]Entry, error) {
+func (store *SQLStore) ListEntriesByMemberTx(ctx context.Context, arg ListEntriesByMemberTxParams) ([]Entry, error) {
 	var result []Entry
 
 	err := store.execTx(ctx, func(q *Queries) error {

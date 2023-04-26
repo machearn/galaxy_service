@@ -9,7 +9,7 @@ import (
 )
 
 func (server *Server) GetItem(ctx context.Context, req *pb.GetItemRequest) (*pb.GetItemResponse, error) {
-	item, err := server.store.Queries.GetItem(ctx, req.GetId())
+	item, err := server.store.GetItem(ctx, req.GetId())
 	if err != nil {
 		log.Print("cannot get item: ", err)
 		return nil, err
@@ -36,7 +36,7 @@ func (server *Server) ListItems(ctx context.Context, req *pb.ListItemsRequest) (
 		Limit:  limit,
 	}
 
-	rows, err := server.store.Queries.ListItems(ctx, arg)
+	rows, err := server.store.ListItems(ctx, arg)
 	if err != nil {
 		log.Print("cannot list items: ", err)
 		return nil, err

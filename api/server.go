@@ -9,10 +9,10 @@ import (
 type Server struct {
 	pb.UnimplementedGalaxyServer
 	config util.Config
-	store  *db.Store
+	store  db.Store
 }
 
-func NewServer(config util.Config, store *db.Store) (*Server, error) {
+func NewServer(config util.Config, store db.Store) (*Server, error) {
 	return &Server{
 		config: config,
 		store:  store,

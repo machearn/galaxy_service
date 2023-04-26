@@ -15,7 +15,7 @@ func (server *Server) CreateItem(ctx context.Context, req *pb.CreateItemRequest)
 		Price:    req.Price,
 	}
 
-	item, err := server.store.Queries.CreateItem(ctx, arg)
+	item, err := server.store.CreateItem(ctx, arg)
 	if err != nil {
 		log.Print("cannot create item: ", err)
 		return nil, err

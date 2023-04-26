@@ -8,10 +8,12 @@ import (
 )
 
 func (server *Server) DeleteItem(ctx context.Context, req *pb.DeleteItemRequest) (*pb.DeleteItemResponse, error) {
-	err := server.store.Queries.DeleteItem(ctx, req.GetId())
+	err := server.store.DeleteItem(ctx, req.GetId())
 	if err != nil {
 		log.Print("cannot delete item: ", err)
-		return nil, err
+		return &pb.DeleteItemResponse{
+			Success: false,
+		}, err
 	}
 
 	rep := pb.DeleteItemResponse{
