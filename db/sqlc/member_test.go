@@ -15,6 +15,7 @@ func CreateRandomMember(t *testing.T) Member {
 		Username:  util.GetRandomString(5),
 		Fullname:  util.GetRandomString(10),
 		Email:     util.GetRandomString(10) + "@gmail.com",
+		Password:  util.GetRandomString(10),
 		Plan:      int32(util.GetRandomInt(1, 3)),
 		CreatedAt: time.Now().UTC().Truncate(time.Second),
 		ExpiredAt: time.Now().AddDate(0, 0, 30).UTC().Truncate(time.Second),
@@ -29,6 +30,7 @@ func CreateRandomMember(t *testing.T) Member {
 	require.Equal(t, arg.Username, member.Username)
 	require.Equal(t, arg.Fullname, member.Fullname)
 	require.Equal(t, arg.Email, member.Email)
+	require.Equal(t, arg.Password, member.Password)
 	require.Equal(t, arg.Plan, member.Plan)
 	require.Equal(t, arg.CreatedAt, member.CreatedAt.UTC())
 	require.Equal(t, arg.ExpiredAt, member.ExpiredAt.UTC())
@@ -56,6 +58,7 @@ func TestGetMember(t *testing.T) {
 	require.Equal(t, member.Username, member2.Username)
 	require.Equal(t, member.Fullname, member2.Fullname)
 	require.Equal(t, member.Email, member2.Email)
+	require.Equal(t, member.Password, member2.Password)
 	require.Equal(t, member.Plan, member2.Plan)
 	require.Equal(t, member.CreatedAt.UTC(), member2.CreatedAt.UTC())
 	require.Equal(t, member.ExpiredAt.UTC(), member2.ExpiredAt.UTC())
@@ -75,6 +78,7 @@ func TestGetMemberByName(t *testing.T) {
 	require.Equal(t, member.Username, member2.Username)
 	require.Equal(t, member.Fullname, member2.Fullname)
 	require.Equal(t, member.Email, member2.Email)
+	require.Equal(t, member.Password, member2.Password)
 	require.Equal(t, member.Plan, member2.Plan)
 	require.Equal(t, member.CreatedAt.UTC(), member2.CreatedAt.UTC())
 	require.Equal(t, member.ExpiredAt.UTC(), member2.ExpiredAt.UTC())
@@ -108,6 +112,7 @@ func TestListMembers(t *testing.T) {
 		require.Equal(t, members[index].Username, member.Username)
 		require.Equal(t, members[index].Fullname, member.Fullname)
 		require.Equal(t, members[index].Email, member.Email)
+		require.Equal(t, members[index].Password, member.Password)
 		require.Equal(t, members[index].Plan, member.Plan)
 		require.Equal(t, members[index].CreatedAt.UTC(), member.CreatedAt.UTC())
 		require.Equal(t, members[index].ExpiredAt.UTC(), member.ExpiredAt.UTC())
@@ -125,6 +130,7 @@ func TestUpdateMember(t *testing.T) {
 		Username:  sql.NullString{String: util.GetRandomString(5), Valid: true},
 		Fullname:  sql.NullString{String: util.GetRandomString(10), Valid: true},
 		Email:     sql.NullString{String: util.GetRandomString(10) + "@gmail.com", Valid: true},
+		Password:  sql.NullString{String: util.GetRandomString(10), Valid: true},
 		Plan:      sql.NullInt32{Int32: int32(util.GetRandomInt(1, 3)), Valid: true},
 		ExpiredAt: sql.NullTime{Time: time.Now().AddDate(0, 0, 30).UTC().Truncate(time.Second), Valid: true},
 		AutoRenew: sql.NullBool{Bool: false, Valid: true},
@@ -138,6 +144,7 @@ func TestUpdateMember(t *testing.T) {
 	require.Equal(t, arg2.Username.String, member2.Username)
 	require.Equal(t, arg2.Fullname.String, member2.Fullname)
 	require.Equal(t, arg2.Email.String, member2.Email)
+	require.Equal(t, arg2.Password.String, member2.Password)
 	require.Equal(t, arg2.Plan.Int32, member2.Plan)
 	require.Equal(t, arg2.ExpiredAt.Time, member2.ExpiredAt.UTC())
 	require.Equal(t, arg2.AutoRenew.Bool, member2.AutoRenew)
