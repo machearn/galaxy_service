@@ -6,6 +6,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 type Querier interface {
@@ -20,6 +22,7 @@ type Querier interface {
 	GetItem(ctx context.Context, id int32) (Item, error)
 	GetMember(ctx context.Context, id int32) (Member, error)
 	GetMemberByName(ctx context.Context, username string) (Member, error)
+	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	ListEntries(ctx context.Context, arg ListEntriesParams) ([]Entry, error)
 	ListEntriesByItem(ctx context.Context, arg ListEntriesByItemParams) ([]Entry, error)
 	ListEntriesByMember(ctx context.Context, arg ListEntriesByMemberParams) ([]Entry, error)
