@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 )
 
@@ -78,21 +79,6 @@ func (m *MockStore) CreateMember(arg0 context.Context, arg1 db.CreateMemberParam
 func (mr *MockStoreMockRecorder) CreateMember(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMember", reflect.TypeOf((*MockStore)(nil).CreateMember), arg0, arg1)
-}
-
-// CreateMemberTx mocks base method.
-func (m *MockStore) CreateMemberTx(arg0 context.Context, arg1 db.CreateMemberTxParams, arg2 db.CreateSessionTxParams) (*db.CreateMemberResult, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateMemberTx", arg0, arg1, arg2)
-	ret0, _ := ret[0].(*db.CreateMemberResult)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateMemberTx indicates an expected call of CreateMemberTx.
-func (mr *MockStoreMockRecorder) CreateMemberTx(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMemberTx", reflect.TypeOf((*MockStore)(nil).CreateMemberTx), arg0, arg1, arg2)
 }
 
 // CreateSession mocks base method.
@@ -210,6 +196,21 @@ func (m *MockStore) GetMemberByName(arg0 context.Context, arg1 string) (db.Membe
 func (mr *MockStoreMockRecorder) GetMemberByName(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMemberByName", reflect.TypeOf((*MockStore)(nil).GetMemberByName), arg0, arg1)
+}
+
+// GetSession mocks base method.
+func (m *MockStore) GetSession(arg0 context.Context, arg1 uuid.UUID) (db.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSession", arg0, arg1)
+	ret0, _ := ret[0].(db.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSession indicates an expected call of GetSession.
+func (mr *MockStoreMockRecorder) GetSession(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSession", reflect.TypeOf((*MockStore)(nil).GetSession), arg0, arg1)
 }
 
 // ListEntries mocks base method.

@@ -41,12 +41,12 @@ type Member struct {
 }
 
 type Session struct {
-	ID        uuid.UUID `json:"id"`
-	MemberID  int32     `json:"member_id"`
-	Token     string    `json:"token"`
-	ClientIp  string    `json:"client_ip"`
-	UserAgent string    `json:"user_agent"`
-	IsActive  bool      `json:"is_active"`
-	CreatedAt time.Time `json:"created_at"`
-	ExpiredAt time.Time `json:"expired_at"`
+	ID           uuid.UUID `json:"id"`
+	MemberID     int32     `json:"member_id"`
+	RefreshToken string    `json:"refresh_token"`
+	ClientIp     string    `json:"client_ip"`
+	UserAgent    string    `json:"user_agent"`
+	IsBlocked    bool      `json:"is_blocked"`
+	CreatedAt    time.Time `json:"created_at"`
+	ExpiredAt    time.Time `json:"expired_at"`
 }
