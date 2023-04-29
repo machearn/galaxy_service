@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateSession(t *testing.T) {
+func CreateRandomSession(t *testing.T) Session {
 	member := CreateRandomMember(t)
 
 	arg := CreateSessionParams{
@@ -36,4 +36,28 @@ func TestCreateSession(t *testing.T) {
 	require.Equal(t, arg.CreatedAt, session.CreatedAt.UTC())
 	require.Equal(t, arg.ExpiredAt, session.ExpiredAt.UTC())
 	require.False(t, session.IsBlocked)
+
+	return session
+}
+
+func TestCreateSession(t *testing.T) {
+	CreateRandomSession(t)
+}
+
+func TestGetSession(t *testing.T) {
+	session := CreateRandomSession(t)
+
+	session2, err := testQueries.GetSession(context.Background(), session.ID)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, session2)
+
+	require.Equal(t, session.ID, session2.ID)
+	require.Equal(t, session.MemberID, session2.MemberID)
+	require.Equal(t, session.RefreshToken, session2.RefreshToken)
+	require.Equal(t, session.ClientIp, session2.ClientIp)
+	require.Equal(t, session.UserAgent, session2.UserAgent)
+	require.Equal(t, session.CreatedAt, session2.CreatedAt)
+	require.Equal(t, session.ExpiredAt, session2.ExpiredAt)
+	require.Equal(t, session.IsBlocked, session2.IsBlocked)
 }
