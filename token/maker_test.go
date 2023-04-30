@@ -43,3 +43,26 @@ func TestNewTokenMaker(t *testing.T) {
 	require.WithinDuration(t, issuedAt, parsedIssue, time.Second)
 	require.WithinDuration(t, expiredAt, parsedExpire, time.Second)
 }
+
+func TestExpiredToken(t *testing.T) {
+	key := util.GetRandomString(32)
+
+	maker, err := NewTokenMaker(key)
+	require.NoError(t, err)
+	require.NotEmpty(t, maker)
+
+	memberID := int32(util.GetRandomInt(1, 20))
+	duration := time.Second
+
+	signed, token, err := maker.CreateToken(memberID, duration)
+	require.NoError(t, err)
+	require.NotEmpty(t, signed)
+	require.NotEmpty(t, token)
+
+	time.Sleep(time.Second * 2)
+
+	parsedToken, err := maker.VerifyToken(signed)
+
+	require.Error(t, err)
+	require.Empty(t, parsedToken)
+}
