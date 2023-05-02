@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/lib/pq"
 	"github.com/machearn/galaxy_service/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -11,8 +12,9 @@ import (
 func (server *Server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	user, err := server.store.GetMember(ctx, req.GetID())
 	if err != nil {
-		log.Print("cannot get user: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("cannot get user: ", pqErr)
+		return nil, pqErr
 	}
 
 	return &pb.GetUserResponse{

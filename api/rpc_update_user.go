@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/lib/pq"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"github.com/machearn/galaxy_service/util"
@@ -58,11 +59,12 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	user, err := server.store.UpdateMember(ctx, arg)
 	if err != nil {
-		log.Print("cannot update user: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("cannot update user: ", pqErr)
+		return nil, pqErr
 	}
 
-	rep := pb.UpdateUserResponse{
+	res := pb.UpdateUserResponse{
 		User: &pb.User{
 			ID:        user.ID,
 			Username:  user.Username,
@@ -75,5 +77,5 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 		},
 	}
 
-	return &rep, nil
+	return &res, nil
 }

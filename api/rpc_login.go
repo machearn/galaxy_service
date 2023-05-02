@@ -2,59 +2,68 @@ package api
 
 import (
 	"context"
-	"errors"
 	"log"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
+	"github.com/machearn/galaxy_service/util"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	user, err := server.store.GetMemberByName(ctx, req.GetUsername())
 	if err != nil {
-		log.Print("cannot get user: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("cannot get user: ", pqErr)
+		return nil, pqErr
 	}
 
 	if req.GetPassword() != user.Password {
+		apiErr := util.NewAPIError("403", "forbiden")
 		log.Print("password not match")
-		return nil, errors.New("password not match")
+		return nil, apiErr
 	}
 
 	encryptedAccessToken, accessToken, err := server.tokenMaker.CreateToken(user.ID, server.config.AccessTokenDuration)
 	if err != nil {
-		log.Print("cannot generate access token: ", err)
-		return nil, err
+		apiErr := util.NewAPIError("500", "internal error")
+		log.Print("cannot generate access token: ", apiErr)
+		return nil, apiErr
 	}
 
 	encryptedRefreshToken, refreshToken, err := server.tokenMaker.CreateToken(user.ID, server.config.RefreshTokenDuration)
 	if err != nil {
-		log.Print("cannot generate refresh token: ", err)
-		return nil, err
+		apiErr := util.NewAPIError("500", "internal error")
+		log.Print("cannot generate refresh token: ", apiErr)
+		return nil, apiErr
 	}
 
 	uuidString, err := refreshToken.GetJti()
 	if err != nil {
-		log.Print("failed to get uuid: ", err)
-		return nil, err
+		apiErr := util.NewAPIError("500", "internal error")
+		log.Print("failed to get uuid: ", apiErr)
+		return nil, apiErr
 	}
 	ID, err := uuid.Parse(uuidString)
 	if err != nil {
-		log.Print("failed to parse uuid from string: ", err)
-		return nil, err
+		apiErr := util.NewAPIError("500", "internal error")
+		log.Print("failed to parse uuid from string: ", apiErr)
+		return nil, apiErr
 	}
 
 	issuedAt, err := refreshToken.GetIssuedAt()
 	if err != nil {
-		log.Print("failed to get issued time: ", err)
-		return nil, err
+		apiErr := util.NewAPIError("500", "internal error")
+		log.Print("failed to get issued time: ", apiErr)
+		return nil, apiErr
 	}
 	expiredAt, err := refreshToken.GetExpiration()
 	if err != nil {
-		log.Print("failed to get expiration time: ", err)
-		return nil, err
+		apiErr := util.NewAPIError("500", "internal error")
+		log.Print("failed to get expiration time: ", apiErr)
+		return nil, apiErr
 	}
 
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
@@ -67,14 +76,16 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		ExpiredAt:    expiredAt,
 	})
 	if err != nil {
-		log.Print("cannot create session: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("cannot create session: ", pqErr)
+		return nil, pqErr
 	}
 
 	accessExpiredAt, err := accessToken.GetExpiration()
 	if err != nil {
-		log.Print("failed to get expiration time: ", err)
-		return nil, err
+		apiErr := util.NewAPIError("500", "internal error")
+		log.Print("failed to get expiration time: ", apiErr)
+		return nil, apiErr
 	}
 
 	return &pb.LoginResponse{

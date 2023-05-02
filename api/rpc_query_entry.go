@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/lib/pq"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -14,11 +15,12 @@ func (server *Server) GetEntry(ctx context.Context, req *pb.GetEntryRequest) (*p
 
 	entry, err := server.store.GetEntry(ctx, ID)
 	if err != nil {
-		log.Print("failed to get entry: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("failed to get entry: ", pqErr)
+		return nil, pqErr
 	}
 
-	rep := pb.GetEntryResponse{
+	res := pb.GetEntryResponse{
 		Entry: &pb.Entry{
 			ID:        entry.ID,
 			UserId:    entry.MemberID,
@@ -29,7 +31,7 @@ func (server *Server) GetEntry(ctx context.Context, req *pb.GetEntryRequest) (*p
 		},
 	}
 
-	return &rep, nil
+	return &res, nil
 }
 
 func (server *Server) ListEntries(ctx context.Context, req *pb.ListEntriesRequest) (*pb.ListEntriesResponse, error) {
@@ -40,8 +42,9 @@ func (server *Server) ListEntries(ctx context.Context, req *pb.ListEntriesReques
 
 	rows, err := server.store.ListEntries(ctx, arg)
 	if err != nil {
-		log.Print("failed to list entries: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("failed to list entries: ", pqErr)
+		return nil, pqErr
 	}
 
 	var entries []*pb.Entry
@@ -56,11 +59,11 @@ func (server *Server) ListEntries(ctx context.Context, req *pb.ListEntriesReques
 		})
 	}
 
-	rep := pb.ListEntriesResponse{
+	res := pb.ListEntriesResponse{
 		Entries: entries,
 	}
 
-	return &rep, nil
+	return &res, nil
 }
 
 func (server *Server) ListEntriesByUser(ctx context.Context, req *pb.ListEntriesByUserRequest) (*pb.ListEntriesResponse, error) {
@@ -72,8 +75,9 @@ func (server *Server) ListEntriesByUser(ctx context.Context, req *pb.ListEntries
 
 	rows, err := server.store.ListEntriesByMember(ctx, arg)
 	if err != nil {
-		log.Print("failed to list entries: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("failed to list entries: ", pqErr)
+		return nil, pqErr
 	}
 
 	var entries []*pb.Entry
@@ -104,8 +108,9 @@ func (server *Server) ListEntriesByItem(ctx context.Context, req *pb.ListEntries
 
 	rows, err := server.store.ListEntriesByItem(ctx, arg)
 	if err != nil {
-		log.Print("failed to list entries: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("failed to list entries: ", pqErr)
+		return nil, pqErr
 	}
 
 	var entries []*pb.Entry
