@@ -8,12 +8,17 @@ import (
 	"github.com/google/uuid"
 )
 
-type TokenMaker struct {
+type TokenMaker interface {
+	CreateToken(memberID int32, duration time.Duration) (string, *paseto.Token, error)
+	VerifyToken(signedToken string) (*paseto.Token, error)
+}
+
+type PasetoTokenMaker struct {
 	Parser    *paseto.Parser
 	SecretKey paseto.V4SymmetricKey
 }
 
-func NewTokenMaker(key string) (*TokenMaker, error) {
+func NewTokenMaker(key string) (TokenMaker, error) {
 	secretKey, err := paseto.V4SymmetricKeyFromBytes([]byte(key))
 	if err != nil {
 		log.Print("failded to generate secret key: ", err)
@@ -22,13 +27,13 @@ func NewTokenMaker(key string) (*TokenMaker, error) {
 
 	parser := paseto.NewParser()
 
-	return &TokenMaker{
+	return &PasetoTokenMaker{
 		Parser:    &parser,
 		SecretKey: secretKey,
 	}, nil
 }
 
-func (maker *TokenMaker) CreateToken(memberID int32, duration time.Duration) (string, *paseto.Token, error) {
+func (maker *PasetoTokenMaker) CreateToken(memberID int32, duration time.Duration) (string, *paseto.Token, error) {
 	token := paseto.NewToken()
 	now := time.Now().UTC().Truncate(time.Second)
 	exp := now.Add(duration).Truncate(time.Second)
@@ -42,7 +47,7 @@ func (maker *TokenMaker) CreateToken(memberID int32, duration time.Duration) (st
 	return token.V4Encrypt(maker.SecretKey, nil), &token, nil
 }
 
-func (maker *TokenMaker) VerifyToken(encrypted string) (*paseto.Token, error) {
+func (maker *PasetoTokenMaker) VerifyToken(encrypted string) (*paseto.Token, error) {
 	maker.Parser.AddRule(paseto.NotExpired())
 	maker.Parser.AddRule(paseto.ValidAt(time.Now().UTC().Truncate(time.Second)))
 
