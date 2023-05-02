@@ -6,6 +6,12 @@ import "rpc_create_item.proto";
 import "rpc_query_item.proto";
 import "rpc_update_item.proto";
 import "rpc_delete_item.proto";
+import "rpc_login_user.proto";
+import "rpc_create_user.proto";
+import "rpc_query_user.proto";
+import "rpc_update_user.proto";
+import "rpc_auth.proto";
+import "rpc_renew_token.proto";
 
 option go_package = "github.com/machearn/galaxy_service/pb";
 
@@ -15,4 +21,10 @@ service Galaxy {
     rpc ListItems(ListItemsRequest) returns (ListItemsResponse) {}
     rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {}
     rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {}
+    rpc Login(LoginRequest) returns (LoginResponse) {}
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {}
+    rpc Authorize(AuthRequest) returns (AuthResponse) {}
+    rpc RenewAccessToken(RenewAccessTokenRequest) returns (RenewAccessTokenResponse) {}
 }
