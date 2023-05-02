@@ -10,6 +10,7 @@ import (
 	"github.com/machearn/galaxy_service/api"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
+	token "github.com/machearn/galaxy_service/token/maker"
 	"github.com/machearn/galaxy_service/util"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -29,7 +30,12 @@ func main() {
 
 	store := db.NewStore(conn)
 
-	server, err := api.NewServer(config, store)
+	tokenMaker, err := token.NewTokenMaker(config.TokenSymmetricKey)
+	if err != nil {
+		log.Fatal("cannot create token maker: ", err)
+	}
+
+	server, err := api.NewServer(config, store, tokenMaker)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}

@@ -47,7 +47,7 @@ func TestCreateItemAPI(t *testing.T) {
 	store := mockdb.NewMockStore(ctrl)
 	store.EXPECT().CreateItem(gomock.Any(), gomock.Eq(arg)).Times(1).Return(item, nil)
 
-	listener := startTestServer(t, store)
+	listener := startTestServer(t, store, nil)
 	defer listener.Close()
 
 	conn, err := grpc.Dial(listener.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -77,7 +77,7 @@ func TestGetItemAPI(t *testing.T) {
 	store := mockdb.NewMockStore(ctrl)
 	store.EXPECT().GetItem(gomock.Any(), gomock.Eq(item.ID)).Times(1).Return(item, nil)
 
-	listener := startTestServer(t, store)
+	listener := startTestServer(t, store, nil)
 	defer listener.Close()
 
 	conn, err := grpc.Dial(listener.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -117,7 +117,7 @@ func TestListItemsAPI(t *testing.T) {
 	store := mockdb.NewMockStore(ctrl)
 	store.EXPECT().ListItems(gomock.Any(), gomock.Eq(arg)).Times(1).Return(items, nil)
 
-	listener := startTestServer(t, store)
+	listener := startTestServer(t, store, nil)
 	defer listener.Close()
 
 	conn, err := grpc.Dial(listener.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -168,7 +168,7 @@ func TestUpdateItemAPI(t *testing.T) {
 	store := mockdb.NewMockStore(ctrl)
 	store.EXPECT().UpdateItem(gomock.Any(), gomock.Eq(arg)).Times(1).Return(newItem, nil)
 
-	listener := startTestServer(t, store)
+	listener := startTestServer(t, store, nil)
 	defer listener.Close()
 
 	conn, err := grpc.Dial(listener.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -198,7 +198,7 @@ func TestDeleteItemAPI(t *testing.T) {
 	store := mockdb.NewMockStore(ctrl)
 	store.EXPECT().DeleteItem(gomock.Any(), gomock.Eq(item.ID)).Times(1).Return(nil)
 
-	listener := startTestServer(t, store)
+	listener := startTestServer(t, store, nil)
 	defer listener.Close()
 
 	conn, err := grpc.Dial(listener.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
