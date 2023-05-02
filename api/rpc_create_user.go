@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/lib/pq"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"github.com/machearn/galaxy_service/util"
@@ -26,8 +27,9 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 	user, err := server.store.CreateMember(ctx, arg)
 	if err != nil {
-		log.Print("cannot create user: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("cannot create user: ", pqErr)
+		return nil, pqErr
 	}
 
 	return &pb.CreateUserResponse{

@@ -53,7 +53,8 @@ func (maker *PasetoTokenMaker) VerifyToken(encrypted string) (*paseto.Token, err
 
 	parsedToken, err := maker.Parser.ParseV4Local(maker.SecretKey, encrypted, nil)
 	if err != nil {
-		return nil, err
+		ruleError := err.(*paseto.RuleError)
+		return nil, ruleError
 	}
 
 	return parsedToken, nil

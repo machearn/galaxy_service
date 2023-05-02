@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/lib/pq"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -21,11 +22,12 @@ func (server *Server) CreateEntry(ctx context.Context, req *pb.CreateEntryReques
 
 	entry, err := server.store.CreateEntry(ctx, arg)
 	if err != nil {
-		log.Print("cannot create entry: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("cannot create entry: ", pqErr)
+		return nil, pqErr
 	}
 
-	rep := pb.CreateEntryResponse{
+	res := pb.CreateEntryResponse{
 		Entry: &pb.Entry{
 			ID:        entry.ID,
 			UserId:    entry.MemberID,
@@ -36,5 +38,5 @@ func (server *Server) CreateEntry(ctx context.Context, req *pb.CreateEntryReques
 		},
 	}
 
-	return &rep, nil
+	return &res, nil
 }

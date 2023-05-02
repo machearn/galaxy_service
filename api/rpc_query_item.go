@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/lib/pq"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 )
@@ -11,11 +12,12 @@ import (
 func (server *Server) GetItem(ctx context.Context, req *pb.GetItemRequest) (*pb.GetItemResponse, error) {
 	item, err := server.store.GetItem(ctx, req.GetId())
 	if err != nil {
-		log.Print("cannot get item: ", err)
-		return nil, err
+		pqErr := err.(*pq.Error)
+		log.Print("cannot get item: ", pqErr)
+		return nil, pqErr
 	}
 
-	rep := pb.GetItemResponse{
+	res := pb.GetItemResponse{
 		Item: &pb.Item{
 			ID:       item.ID,
 			Name:     item.Name,
@@ -24,7 +26,7 @@ func (server *Server) GetItem(ctx context.Context, req *pb.GetItemRequest) (*pb.
 		},
 	}
 
-	return &rep, nil
+	return &res, nil
 }
 
 func (server *Server) ListItems(ctx context.Context, req *pb.ListItemsRequest) (*pb.ListItemsResponse, error) {

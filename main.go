@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"log"
 	"net"
-	"os"
 
 	_ "github.com/lib/pq"
 	"github.com/machearn/galaxy_service/api"
@@ -20,7 +19,6 @@ func main() {
 	config, err := util.LoadConfig(".")
 	if err != nil {
 		log.Fatal("failed to load config:", err)
-		os.Exit(1)
 	}
 
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
