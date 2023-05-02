@@ -26,8 +26,11 @@ protoc:
 mockdb:
 	mockgen -package mockdb -destination db/mock/store.go github.com/machearn/galaxy_service/db/sqlc Store
 
+token_mock:
+	mockgen -package mock_token -destination token/mock/maker.go github.com/machearn/galaxy_service/token/maker TokenMaker
+
 start:
 	go run main.go
 
 .PHONY:
-	postgres createdb dropdb migrateup migratedown sqlc test protoc mockdb start
+	postgres createdb dropdb migrateup migratedown sqlc test protoc mockdb token_mock start

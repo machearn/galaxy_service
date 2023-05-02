@@ -19,17 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Galaxy_CreateItem_FullMethodName       = "/pb.Galaxy/CreateItem"
-	Galaxy_GetItem_FullMethodName          = "/pb.Galaxy/GetItem"
-	Galaxy_ListItems_FullMethodName        = "/pb.Galaxy/ListItems"
-	Galaxy_UpdateItem_FullMethodName       = "/pb.Galaxy/UpdateItem"
-	Galaxy_DeleteItem_FullMethodName       = "/pb.Galaxy/DeleteItem"
-	Galaxy_Login_FullMethodName            = "/pb.Galaxy/Login"
-	Galaxy_CreateUser_FullMethodName       = "/pb.Galaxy/CreateUser"
-	Galaxy_GetUser_FullMethodName          = "/pb.Galaxy/GetUser"
-	Galaxy_UpdateUser_FullMethodName       = "/pb.Galaxy/UpdateUser"
-	Galaxy_Authorize_FullMethodName        = "/pb.Galaxy/Authorize"
-	Galaxy_RenewAccessToken_FullMethodName = "/pb.Galaxy/RenewAccessToken"
+	Galaxy_CreateItem_FullMethodName        = "/pb.Galaxy/CreateItem"
+	Galaxy_GetItem_FullMethodName           = "/pb.Galaxy/GetItem"
+	Galaxy_ListItems_FullMethodName         = "/pb.Galaxy/ListItems"
+	Galaxy_UpdateItem_FullMethodName        = "/pb.Galaxy/UpdateItem"
+	Galaxy_DeleteItem_FullMethodName        = "/pb.Galaxy/DeleteItem"
+	Galaxy_Login_FullMethodName             = "/pb.Galaxy/Login"
+	Galaxy_CreateUser_FullMethodName        = "/pb.Galaxy/CreateUser"
+	Galaxy_GetUser_FullMethodName           = "/pb.Galaxy/GetUser"
+	Galaxy_UpdateUser_FullMethodName        = "/pb.Galaxy/UpdateUser"
+	Galaxy_Authorize_FullMethodName         = "/pb.Galaxy/Authorize"
+	Galaxy_RenewAccessToken_FullMethodName  = "/pb.Galaxy/RenewAccessToken"
+	Galaxy_CreateEntry_FullMethodName       = "/pb.Galaxy/CreateEntry"
+	Galaxy_GetEntry_FullMethodName          = "/pb.Galaxy/GetEntry"
+	Galaxy_ListEntries_FullMethodName       = "/pb.Galaxy/ListEntries"
+	Galaxy_ListEntriesByUser_FullMethodName = "/pb.Galaxy/ListEntriesByUser"
+	Galaxy_ListEntriesByItem_FullMethodName = "/pb.Galaxy/ListEntriesByItem"
+	Galaxy_DeleteEntry_FullMethodName       = "/pb.Galaxy/DeleteEntry"
 )
 
 // GalaxyClient is the client API for Galaxy service.
@@ -47,6 +53,12 @@ type GalaxyClient interface {
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	Authorize(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	RenewAccessToken(ctx context.Context, in *RenewAccessTokenRequest, opts ...grpc.CallOption) (*RenewAccessTokenResponse, error)
+	CreateEntry(ctx context.Context, in *CreateEntryRequest, opts ...grpc.CallOption) (*CreateEntryResponse, error)
+	GetEntry(ctx context.Context, in *GetEntryRequest, opts ...grpc.CallOption) (*GetEntryResponse, error)
+	ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
+	ListEntriesByUser(ctx context.Context, in *ListEntriesByUserRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
+	ListEntriesByItem(ctx context.Context, in *ListEntriesByItemRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
+	DeleteEntry(ctx context.Context, in *DeleteEntryRequest, opts ...grpc.CallOption) (*DeleteEntryResponse, error)
 }
 
 type galaxyClient struct {
@@ -156,6 +168,60 @@ func (c *galaxyClient) RenewAccessToken(ctx context.Context, in *RenewAccessToke
 	return out, nil
 }
 
+func (c *galaxyClient) CreateEntry(ctx context.Context, in *CreateEntryRequest, opts ...grpc.CallOption) (*CreateEntryResponse, error) {
+	out := new(CreateEntryResponse)
+	err := c.cc.Invoke(ctx, Galaxy_CreateEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *galaxyClient) GetEntry(ctx context.Context, in *GetEntryRequest, opts ...grpc.CallOption) (*GetEntryResponse, error) {
+	out := new(GetEntryResponse)
+	err := c.cc.Invoke(ctx, Galaxy_GetEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *galaxyClient) ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
+	out := new(ListEntriesResponse)
+	err := c.cc.Invoke(ctx, Galaxy_ListEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *galaxyClient) ListEntriesByUser(ctx context.Context, in *ListEntriesByUserRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
+	out := new(ListEntriesResponse)
+	err := c.cc.Invoke(ctx, Galaxy_ListEntriesByUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *galaxyClient) ListEntriesByItem(ctx context.Context, in *ListEntriesByItemRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
+	out := new(ListEntriesResponse)
+	err := c.cc.Invoke(ctx, Galaxy_ListEntriesByItem_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *galaxyClient) DeleteEntry(ctx context.Context, in *DeleteEntryRequest, opts ...grpc.CallOption) (*DeleteEntryResponse, error) {
+	out := new(DeleteEntryResponse)
+	err := c.cc.Invoke(ctx, Galaxy_DeleteEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GalaxyServer is the server API for Galaxy service.
 // All implementations must embed UnimplementedGalaxyServer
 // for forward compatibility
@@ -171,6 +237,12 @@ type GalaxyServer interface {
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	Authorize(context.Context, *AuthRequest) (*AuthResponse, error)
 	RenewAccessToken(context.Context, *RenewAccessTokenRequest) (*RenewAccessTokenResponse, error)
+	CreateEntry(context.Context, *CreateEntryRequest) (*CreateEntryResponse, error)
+	GetEntry(context.Context, *GetEntryRequest) (*GetEntryResponse, error)
+	ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error)
+	ListEntriesByUser(context.Context, *ListEntriesByUserRequest) (*ListEntriesResponse, error)
+	ListEntriesByItem(context.Context, *ListEntriesByItemRequest) (*ListEntriesResponse, error)
+	DeleteEntry(context.Context, *DeleteEntryRequest) (*DeleteEntryResponse, error)
 	mustEmbedUnimplementedGalaxyServer()
 }
 
@@ -210,6 +282,24 @@ func (UnimplementedGalaxyServer) Authorize(context.Context, *AuthRequest) (*Auth
 }
 func (UnimplementedGalaxyServer) RenewAccessToken(context.Context, *RenewAccessTokenRequest) (*RenewAccessTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RenewAccessToken not implemented")
+}
+func (UnimplementedGalaxyServer) CreateEntry(context.Context, *CreateEntryRequest) (*CreateEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateEntry not implemented")
+}
+func (UnimplementedGalaxyServer) GetEntry(context.Context, *GetEntryRequest) (*GetEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEntry not implemented")
+}
+func (UnimplementedGalaxyServer) ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEntries not implemented")
+}
+func (UnimplementedGalaxyServer) ListEntriesByUser(context.Context, *ListEntriesByUserRequest) (*ListEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEntriesByUser not implemented")
+}
+func (UnimplementedGalaxyServer) ListEntriesByItem(context.Context, *ListEntriesByItemRequest) (*ListEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEntriesByItem not implemented")
+}
+func (UnimplementedGalaxyServer) DeleteEntry(context.Context, *DeleteEntryRequest) (*DeleteEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEntry not implemented")
 }
 func (UnimplementedGalaxyServer) mustEmbedUnimplementedGalaxyServer() {}
 
@@ -422,6 +512,114 @@ func _Galaxy_RenewAccessToken_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Galaxy_CreateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GalaxyServer).CreateEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Galaxy_CreateEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GalaxyServer).CreateEntry(ctx, req.(*CreateEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Galaxy_GetEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GalaxyServer).GetEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Galaxy_GetEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GalaxyServer).GetEntry(ctx, req.(*GetEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Galaxy_ListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEntriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GalaxyServer).ListEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Galaxy_ListEntries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GalaxyServer).ListEntries(ctx, req.(*ListEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Galaxy_ListEntriesByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEntriesByUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GalaxyServer).ListEntriesByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Galaxy_ListEntriesByUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GalaxyServer).ListEntriesByUser(ctx, req.(*ListEntriesByUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Galaxy_ListEntriesByItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEntriesByItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GalaxyServer).ListEntriesByItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Galaxy_ListEntriesByItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GalaxyServer).ListEntriesByItem(ctx, req.(*ListEntriesByItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Galaxy_DeleteEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GalaxyServer).DeleteEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Galaxy_DeleteEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GalaxyServer).DeleteEntry(ctx, req.(*DeleteEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Galaxy_ServiceDesc is the grpc.ServiceDesc for Galaxy service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -472,6 +670,30 @@ var Galaxy_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RenewAccessToken",
 			Handler:    _Galaxy_RenewAccessToken_Handler,
+		},
+		{
+			MethodName: "CreateEntry",
+			Handler:    _Galaxy_CreateEntry_Handler,
+		},
+		{
+			MethodName: "GetEntry",
+			Handler:    _Galaxy_GetEntry_Handler,
+		},
+		{
+			MethodName: "ListEntries",
+			Handler:    _Galaxy_ListEntries_Handler,
+		},
+		{
+			MethodName: "ListEntriesByUser",
+			Handler:    _Galaxy_ListEntriesByUser_Handler,
+		},
+		{
+			MethodName: "ListEntriesByItem",
+			Handler:    _Galaxy_ListEntriesByItem_Handler,
+		},
+		{
+			MethodName: "DeleteEntry",
+			Handler:    _Galaxy_DeleteEntry_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
