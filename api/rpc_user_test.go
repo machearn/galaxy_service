@@ -163,7 +163,7 @@ func TestCreateUserAPI(t *testing.T) {
 	defer ctrl.Finish()
 
 	store := mockdb.NewMockStore(ctrl)
-	store.EXPECT().CreateMember(gomock.Any(), EqCreateMemberParams(arg)).Times(1).Return(user, nil)
+	store.EXPECT().CreateMemberTx(gomock.Any(), EqCreateMemberParams(arg), gomock.Any()).Times(1).Return(user, nil)
 
 	listener := startTestServer(t, store, nil)
 	defer listener.Close()

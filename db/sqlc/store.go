@@ -9,6 +9,7 @@ import (
 type Store interface {
 	Querier
 	ListEntriesByMemberTx(ctx context.Context, arg ListEntriesByMemberTxParams) ([]Entry, error)
+	CreateMemberTx(ctx context.Context, arg CreateMemberParams, callback func(Member) error) (Member, error)
 }
 
 type SQLStore struct {

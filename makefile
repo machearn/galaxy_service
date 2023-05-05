@@ -29,8 +29,14 @@ mockdb:
 token_mock:
 	mockgen -package mock_token -destination token/mock/maker.go github.com/machearn/galaxy_service/token/maker TokenMaker
 
+sender_mock:
+	mockgen -package mock_sender -destination mail/mock/sender.go github.com/machearn/galaxy_service/mail EmailSender
+
+redis:
+	docker run --name redis -p 6379:6379 -d redis:7-alpine
+
 start:
 	go run main.go
 
 .PHONY:
-	postgres createdb dropdb migrateup migratedown sqlc test protoc mockdb token_mock start
+	postgres createdb dropdb migrateup migratedown sqlc test protoc mockdb token_mock sender_mock start

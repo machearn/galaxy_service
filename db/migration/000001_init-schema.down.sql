@@ -1,3 +1,3 @@
-drop table if exists "members";
-drop table if exists "items";
-drop table if exists "entries";
+DROP TABLE IF EXISTS "members";
+DROP TABLE IF EXISTS "items";
+DROP TABLE IF EXISTS "entries";
