@@ -1,3 +1,3 @@
 ALTER TABLE "members" DROP COLUMN "password";
 
-DROP TABLE "sessions";
+DROP TABLE IF EXISTS "sessions";

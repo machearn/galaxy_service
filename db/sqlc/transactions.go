@@ -39,3 +39,23 @@ func (store *SQLStore) ListEntriesByMemberTx(ctx context.Context, arg ListEntrie
 
 	return result, nil
 }
+
+func (store *SQLStore) CreateMemberTx(ctx context.Context, arg CreateMemberParams, callback func(Member) error) (Member, error) {
+	var result Member
+
+	err := store.execTx(ctx, func(q *Queries) error {
+		var err error
+		result, err = q.CreateMember(ctx, arg)
+		if err != nil {
+			return err
+		}
+
+		return callback(result)
+	})
+
+	if err != nil {
+		return Member{}, err
+	}
+
+	return result, nil
+}

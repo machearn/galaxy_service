@@ -50,3 +50,10 @@ type Session struct {
 	CreatedAt    time.Time `json:"created_at"`
 	ExpiredAt    time.Time `json:"expired_at"`
 }
+
+type VerificationEmail struct {
+	ID         int32  `json:"id"`
+	MemberID   int32  `json:"member_id"`
+	Email      string `json:"email"`
+	SecretCode string `json:"secret_code"`
+}

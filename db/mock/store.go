@@ -81,6 +81,21 @@ func (mr *MockStoreMockRecorder) CreateMember(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMember", reflect.TypeOf((*MockStore)(nil).CreateMember), arg0, arg1)
 }
 
+// CreateMemberTx mocks base method.
+func (m *MockStore) CreateMemberTx(arg0 context.Context, arg1 db.CreateMemberParams, arg2 func(db.Member) error) (db.Member, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateMemberTx", arg0, arg1, arg2)
+	ret0, _ := ret[0].(db.Member)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateMemberTx indicates an expected call of CreateMemberTx.
+func (mr *MockStoreMockRecorder) CreateMemberTx(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMemberTx", reflect.TypeOf((*MockStore)(nil).CreateMemberTx), arg0, arg1, arg2)
+}
+
 // CreateSession mocks base method.
 func (m *MockStore) CreateSession(arg0 context.Context, arg1 db.CreateSessionParams) (db.Session, error) {
 	m.ctrl.T.Helper()
@@ -94,6 +109,21 @@ func (m *MockStore) CreateSession(arg0 context.Context, arg1 db.CreateSessionPar
 func (mr *MockStoreMockRecorder) CreateSession(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockStore)(nil).CreateSession), arg0, arg1)
+}
+
+// CreateVerificationEmail mocks base method.
+func (m *MockStore) CreateVerificationEmail(arg0 context.Context, arg1 db.CreateVerificationEmailParams) (db.VerificationEmail, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateVerificationEmail", arg0, arg1)
+	ret0, _ := ret[0].(db.VerificationEmail)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateVerificationEmail indicates an expected call of CreateVerificationEmail.
+func (mr *MockStoreMockRecorder) CreateVerificationEmail(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateVerificationEmail", reflect.TypeOf((*MockStore)(nil).CreateVerificationEmail), arg0, arg1)
 }
 
 // DeleteEntry mocks base method.

@@ -25,7 +25,7 @@ func startTestServer(t *testing.T, store db.Store, tokenMaker token.TokenMaker) 
 		require.NotEmpty(t, tokenMaker)
 	}
 
-	server, err := NewServer(config, store, tokenMaker)
+	server, err := NewServer(config, store, tokenMaker, nil)
 	require.NoError(t, err)
 
 	grpcServer := grpc.NewServer()
