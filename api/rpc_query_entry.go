@@ -49,7 +49,12 @@ func (server *Server) ListEntries(ctx context.Context, req *pb.ListEntriesReques
 
 	rows, err := server.store.ListEntries(ctx, arg)
 	if err != nil {
-		apiErr := api_error.NewAPIError(http.StatusNotFound, "entry not found")
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusNotFound, "entry not found")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
 		log.Print("failed to list entries: ", err)
 		return nil, apiErr
 	}
