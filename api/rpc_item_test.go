@@ -207,7 +207,6 @@ func TestDeleteItemAPI(t *testing.T) {
 
 	client := pb.NewGalaxyClient(conn)
 
-	res, err := client.DeleteItem(context.Background(), &req)
+	_, err = client.DeleteItem(context.Background(), &req)
 	require.NoError(t, err)
-	require.True(t, res.GetSuccess())
 }

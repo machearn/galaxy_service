@@ -2,9 +2,11 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"log"
+	"net/http"
 
-	"github.com/lib/pq"
+	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -15,9 +17,14 @@ func (server *Server) GetEntry(ctx context.Context, req *pb.GetEntryRequest) (*p
 
 	entry, err := server.store.GetEntry(ctx, ID)
 	if err != nil {
-		pqErr := err.(*pq.Error)
-		log.Print("failed to get entry: ", pqErr)
-		return nil, pqErr
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusNotFound, "entry not found")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
+		log.Print("failed to get entry: ", err)
+		return nil, apiErr
 	}
 
 	res := pb.GetEntryResponse{
@@ -42,9 +49,9 @@ func (server *Server) ListEntries(ctx context.Context, req *pb.ListEntriesReques
 
 	rows, err := server.store.ListEntries(ctx, arg)
 	if err != nil {
-		pqErr := err.(*pq.Error)
-		log.Print("failed to list entries: ", pqErr)
-		return nil, pqErr
+		apiErr := api_error.NewAPIError(http.StatusNotFound, "entry not found")
+		log.Print("failed to list entries: ", err)
+		return nil, apiErr
 	}
 
 	var entries []*pb.Entry
@@ -75,9 +82,14 @@ func (server *Server) ListEntriesByUser(ctx context.Context, req *pb.ListEntries
 
 	rows, err := server.store.ListEntriesByMember(ctx, arg)
 	if err != nil {
-		pqErr := err.(*pq.Error)
-		log.Print("failed to list entries: ", pqErr)
-		return nil, pqErr
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusBadRequest, "entry not found")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
+		log.Print("failed to list entries: ", err)
+		return nil, apiErr
 	}
 
 	var entries []*pb.Entry
@@ -108,9 +120,14 @@ func (server *Server) ListEntriesByItem(ctx context.Context, req *pb.ListEntries
 
 	rows, err := server.store.ListEntriesByItem(ctx, arg)
 	if err != nil {
-		pqErr := err.(*pq.Error)
-		log.Print("failed to list entries: ", pqErr)
-		return nil, pqErr
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusBadRequest, "entry not found")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
+		log.Print("failed to list entries: ", err)
+		return nil, apiErr
 	}
 
 	var entries []*pb.Entry
