@@ -241,6 +241,4 @@ func TestDeleteEntryAPI(t *testing.T) {
 	res, err := client.DeleteEntry(context.Background(), &req)
 	require.NoError(t, err)
 	require.NotEmpty(t, res)
-
-	require.True(t, res.GetSuccess())
 }

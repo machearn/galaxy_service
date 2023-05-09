@@ -2,67 +2,74 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"log"
+	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
-	"github.com/machearn/galaxy_service/util"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	user, err := server.store.GetMemberByName(ctx, req.GetUsername())
 	if err != nil {
-		pqErr := err.(*pq.Error)
-		log.Print("cannot get user: ", pqErr)
-		return nil, pqErr
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusBadRequest, "user not found")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
+		log.Print("cannot get user: ", err)
+		return nil, apiErr
 	}
 
 	if req.GetPassword() != user.Password {
-		apiErr := util.NewAPIError("403", "forbiden")
+		apiErr := api_error.NewAPIError(http.StatusUnauthorized, "password not match")
 		log.Print("password not match")
 		return nil, apiErr
 	}
 
 	encryptedAccessToken, accessToken, err := server.tokenMaker.CreateToken(user.ID, server.config.AccessTokenDuration)
 	if err != nil {
-		apiErr := util.NewAPIError("500", "internal error")
-		log.Print("cannot generate access token: ", apiErr)
+		apiErr := api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		log.Print("cannot generate access token: ", err)
 		return nil, apiErr
 	}
 
 	encryptedRefreshToken, refreshToken, err := server.tokenMaker.CreateToken(user.ID, server.config.RefreshTokenDuration)
 	if err != nil {
-		apiErr := util.NewAPIError("500", "internal error")
-		log.Print("cannot generate refresh token: ", apiErr)
+		apiErr := api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		log.Print("cannot generate refresh token: ", err)
 		return nil, apiErr
 	}
 
 	uuidString, err := refreshToken.GetJti()
 	if err != nil {
-		apiErr := util.NewAPIError("500", "internal error")
-		log.Print("failed to get uuid: ", apiErr)
+		apiErr := api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		log.Print("failed to get uuid: ", err)
 		return nil, apiErr
 	}
 	ID, err := uuid.Parse(uuidString)
 	if err != nil {
-		apiErr := util.NewAPIError("500", "internal error")
-		log.Print("failed to parse uuid from string: ", apiErr)
+		apiErr := api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		log.Print("failed to parse uuid from string: ", err)
 		return nil, apiErr
 	}
 
 	issuedAt, err := refreshToken.GetIssuedAt()
 	if err != nil {
-		apiErr := util.NewAPIError("500", "internal error")
-		log.Print("failed to get issued time: ", apiErr)
+		apiErr := api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		log.Print("failed to get issued time: ", err)
 		return nil, apiErr
 	}
 	expiredAt, err := refreshToken.GetExpiration()
 	if err != nil {
-		apiErr := util.NewAPIError("500", "internal error")
-		log.Print("failed to get expiration time: ", apiErr)
+		apiErr := api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		log.Print("failed to get expiration time: ", err)
 		return nil, apiErr
 	}
 
@@ -77,14 +84,20 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 	})
 	if err != nil {
 		pqErr := err.(*pq.Error)
-		log.Print("cannot create session: ", pqErr)
-		return nil, pqErr
+		var apiErr *api_error.APIError
+		if pqErr.Code[:2] == "23" {
+			apiErr = api_error.NewAPIError(http.StatusBadRequest, "invalid input")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
+		log.Print("cannot create session: ", err)
+		return nil, apiErr
 	}
 
 	accessExpiredAt, err := accessToken.GetExpiration()
 	if err != nil {
-		apiErr := util.NewAPIError("500", "internal error")
-		log.Print("failed to get expiration time: ", apiErr)
+		apiErr := api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		log.Print("failed to get expiration time: ", err)
 		return nil, apiErr
 	}
 

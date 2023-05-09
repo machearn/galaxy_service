@@ -2,9 +2,11 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"log"
+	"net/http"
 
-	"github.com/lib/pq"
+	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 )
@@ -12,9 +14,14 @@ import (
 func (server *Server) GetItem(ctx context.Context, req *pb.GetItemRequest) (*pb.GetItemResponse, error) {
 	item, err := server.store.GetItem(ctx, req.GetId())
 	if err != nil {
-		pqErr := err.(*pq.Error)
-		log.Print("cannot get item: ", pqErr)
-		return nil, pqErr
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusNotFound, "item not found")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
+		log.Print("cannot get item: ", err)
+		return nil, apiErr
 	}
 
 	res := pb.GetItemResponse{
@@ -40,8 +47,14 @@ func (server *Server) ListItems(ctx context.Context, req *pb.ListItemsRequest) (
 
 	rows, err := server.store.ListItems(ctx, arg)
 	if err != nil {
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusNotFound, "item not found")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
 		log.Print("cannot list items: ", err)
-		return nil, err
+		return nil, apiErr
 	}
 
 	var items []*pb.Item

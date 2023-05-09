@@ -18,12 +18,14 @@ import "rpc_delete_entry.proto";
 
 option go_package = "github.com/machearn/galaxy_service/pb";
 
+message Empty {}
+
 service Galaxy {
     rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {}
     rpc GetItem(GetItemRequest) returns (GetItemResponse) {}
     rpc ListItems(ListItemsRequest) returns (ListItemsResponse) {}
     rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {}
-    rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {}
+    rpc DeleteItem(DeleteItemRequest) returns (Empty) {}
     rpc Login(LoginRequest) returns (LoginResponse) {}
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
@@ -35,5 +37,5 @@ service Galaxy {
     rpc ListEntries(ListEntriesRequest) returns (ListEntriesResponse) {}
     rpc ListEntriesByUser(ListEntriesByUserRequest) returns (ListEntriesResponse) {}
     rpc ListEntriesByItem(ListEntriesByItemRequest) returns (ListEntriesResponse) {}
-    rpc DeleteEntry(DeleteEntryRequest) returns (DeleteEntryResponse) {}
+    rpc DeleteEntry(DeleteEntryRequest) returns (Empty) {}
 }

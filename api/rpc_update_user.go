@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/lib/pq"
+	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"github.com/machearn/galaxy_service/util"
@@ -60,8 +62,16 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	user, err := server.store.UpdateMember(ctx, arg)
 	if err != nil {
 		pqErr := err.(*pq.Error)
-		log.Print("cannot update user: ", pqErr)
-		return nil, pqErr
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusBadRequest, "user not found")
+		} else if pqErr.Code[:2] == "23" {
+			apiErr = api_error.NewAPIError(http.StatusBadRequest, "invalid input")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
+		log.Print("cannot update item: ", err)
+		return nil, apiErr
 	}
 
 	res := pb.UpdateUserResponse{

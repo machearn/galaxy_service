@@ -3,10 +3,12 @@ package api
 import (
 	"context"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/hibiken/asynq"
 	"github.com/lib/pq"
+	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"github.com/machearn/galaxy_service/util"
@@ -42,8 +44,14 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	user, err := server.store.CreateMemberTx(ctx, arg, callback)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
+			var apiErr *api_error.APIError
+			if pqErr.Code[:2] == "23" {
+				apiErr = api_error.NewAPIError(http.StatusBadRequest, "invalid input")
+			} else {
+				apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+			}
 			log.Print("cannot create user, database error: ", pqErr)
-			return nil, pqErr
+			return nil, apiErr
 		}
 		log.Print("cannot create user: ", err)
 		return nil, err

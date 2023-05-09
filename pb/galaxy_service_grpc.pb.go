@@ -46,7 +46,7 @@ type GalaxyClient interface {
 	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
 	ListItems(ctx context.Context, in *ListItemsRequest, opts ...grpc.CallOption) (*ListItemsResponse, error)
 	UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*UpdateItemResponse, error)
-	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error)
+	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*Empty, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
@@ -58,7 +58,7 @@ type GalaxyClient interface {
 	ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
 	ListEntriesByUser(ctx context.Context, in *ListEntriesByUserRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
 	ListEntriesByItem(ctx context.Context, in *ListEntriesByItemRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
-	DeleteEntry(ctx context.Context, in *DeleteEntryRequest, opts ...grpc.CallOption) (*DeleteEntryResponse, error)
+	DeleteEntry(ctx context.Context, in *DeleteEntryRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type galaxyClient struct {
@@ -105,8 +105,8 @@ func (c *galaxyClient) UpdateItem(ctx context.Context, in *UpdateItemRequest, op
 	return out, nil
 }
 
-func (c *galaxyClient) DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error) {
-	out := new(DeleteItemResponse)
+func (c *galaxyClient) DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, Galaxy_DeleteItem_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -213,8 +213,8 @@ func (c *galaxyClient) ListEntriesByItem(ctx context.Context, in *ListEntriesByI
 	return out, nil
 }
 
-func (c *galaxyClient) DeleteEntry(ctx context.Context, in *DeleteEntryRequest, opts ...grpc.CallOption) (*DeleteEntryResponse, error) {
-	out := new(DeleteEntryResponse)
+func (c *galaxyClient) DeleteEntry(ctx context.Context, in *DeleteEntryRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, Galaxy_DeleteEntry_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -230,7 +230,7 @@ type GalaxyServer interface {
 	GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
 	ListItems(context.Context, *ListItemsRequest) (*ListItemsResponse, error)
 	UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error)
-	DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error)
+	DeleteItem(context.Context, *DeleteItemRequest) (*Empty, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
@@ -242,7 +242,7 @@ type GalaxyServer interface {
 	ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error)
 	ListEntriesByUser(context.Context, *ListEntriesByUserRequest) (*ListEntriesResponse, error)
 	ListEntriesByItem(context.Context, *ListEntriesByItemRequest) (*ListEntriesResponse, error)
-	DeleteEntry(context.Context, *DeleteEntryRequest) (*DeleteEntryResponse, error)
+	DeleteEntry(context.Context, *DeleteEntryRequest) (*Empty, error)
 	mustEmbedUnimplementedGalaxyServer()
 }
 
@@ -262,7 +262,7 @@ func (UnimplementedGalaxyServer) ListItems(context.Context, *ListItemsRequest) (
 func (UnimplementedGalaxyServer) UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateItem not implemented")
 }
-func (UnimplementedGalaxyServer) DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error) {
+func (UnimplementedGalaxyServer) DeleteItem(context.Context, *DeleteItemRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteItem not implemented")
 }
 func (UnimplementedGalaxyServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
@@ -298,7 +298,7 @@ func (UnimplementedGalaxyServer) ListEntriesByUser(context.Context, *ListEntries
 func (UnimplementedGalaxyServer) ListEntriesByItem(context.Context, *ListEntriesByItemRequest) (*ListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEntriesByItem not implemented")
 }
-func (UnimplementedGalaxyServer) DeleteEntry(context.Context, *DeleteEntryRequest) (*DeleteEntryResponse, error) {
+func (UnimplementedGalaxyServer) DeleteEntry(context.Context, *DeleteEntryRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEntry not implemented")
 }
 func (UnimplementedGalaxyServer) mustEmbedUnimplementedGalaxyServer() {}

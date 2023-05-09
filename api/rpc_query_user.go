@@ -2,9 +2,11 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"log"
+	"net/http"
 
-	"github.com/lib/pq"
+	"github.com/machearn/galaxy_service/api_error"
 	"github.com/machearn/galaxy_service/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -12,9 +14,14 @@ import (
 func (server *Server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	user, err := server.store.GetMember(ctx, req.GetID())
 	if err != nil {
-		pqErr := err.(*pq.Error)
-		log.Print("cannot get user: ", pqErr)
-		return nil, pqErr
+		var apiErr *api_error.APIError
+		if err == sql.ErrNoRows {
+			apiErr = api_error.NewAPIError(http.StatusNotFound, "user not found")
+		} else {
+			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+		}
+		log.Print("cannot get user: ", err)
+		return nil, apiErr
 	}
 
 	return &pb.GetUserResponse{
