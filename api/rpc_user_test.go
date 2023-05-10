@@ -184,6 +184,40 @@ func TestCreateUserAPI(t *testing.T) {
 	require.Equal(t, user.AutoRenew, res.GetUser().AutoRenew)
 }
 
+func TestGetUserByUsernameAPI(t *testing.T) {
+	user := creatRandomUser()
+
+	req := pb.GetUserByUsernameRequest{
+		Username: user.Username,
+	}
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	store := mockdb.NewMockStore(ctrl)
+	store.EXPECT().GetMemberByName(gomock.Any(), gomock.Eq(user.Username)).Times(1).Return(user, nil)
+
+	listener := startTestServer(t, store, nil)
+	defer listener.Close()
+
+	conn, err := grpc.Dial(listener.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	require.NoError(t, err)
+	defer conn.Close()
+
+	client := pb.NewGalaxyClient(conn)
+
+	res, err := client.GetUserByUsername(context.Background(), &req)
+	require.NoError(t, err)
+	require.Equal(t, user.ID, res.GetUser().ID)
+	require.Equal(t, user.Username, res.GetUser().Username)
+	require.Equal(t, user.Fullname, res.GetUser().Fullname)
+	require.Equal(t, user.Email, res.GetUser().Email)
+	require.Equal(t, user.Plan, res.GetUser().Plan)
+	require.Equal(t, user.CreatedAt, res.GetUser().CreatedAt.AsTime())
+	require.Equal(t, user.ExpiredAt, res.GetUser().ExpiredAt.AsTime())
+	require.Equal(t, user.AutoRenew, res.GetUser().AutoRenew)
+}
+
 func TestGetUserAPI(t *testing.T) {
 	user := creatRandomUser()
 
