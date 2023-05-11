@@ -6,6 +6,8 @@ import (
 	"net"
 
 	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/hibiken/asynq"
 	_ "github.com/lib/pq"
 	"github.com/machearn/galaxy_service/api"
