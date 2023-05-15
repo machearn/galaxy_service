@@ -8,6 +8,7 @@ WORKDIR /app
 COPY --from=builder /app/main .
 COPY app.env .
 COPY start.sh .
+COPY db/migration ./db/migration
 
 EXPOSE 50051
 CMD ["/app/main"]
