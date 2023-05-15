@@ -4,24 +4,21 @@ import (
 	"context"
 	"database/sql"
 	"log"
-	"net/http"
 
-	"github.com/machearn/galaxy_service/api_error"
 	"github.com/machearn/galaxy_service/pb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (server *Server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	user, err := server.store.GetMember(ctx, req.GetID())
 	if err != nil {
-		var apiErr *api_error.APIError
-		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusNotFound, "user not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
-		}
 		log.Print("cannot get user: ", err)
-		return nil, apiErr
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "user not found: %v", err.Error())
+		}
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	return &pb.GetUserResponse{
@@ -42,14 +39,11 @@ func (server *Server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 func (server *Server) GetUserByUsername(ctx context.Context, req *pb.GetUserByUsernameRequest) (*pb.GetUserResponse, error) {
 	user, err := server.store.GetMemberByName(ctx, req.GetUsername())
 	if err != nil {
-		var apiErr *api_error.APIError
-		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusNotFound, "user not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
-		}
 		log.Print("cannot get user: ", err)
-		return nil, apiErr
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "user not found: %v", err.Error())
+		}
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	return &pb.GetUserResponse{

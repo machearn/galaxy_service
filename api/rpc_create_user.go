@@ -3,16 +3,16 @@ package api
 import (
 	"context"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/hibiken/asynq"
 	"github.com/lib/pq"
-	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"github.com/machearn/galaxy_service/util"
 	"github.com/machearn/galaxy_service/worker"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -44,17 +44,14 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 	user, err := server.store.CreateMemberTx(ctx, arg, callback)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
-			var apiErr *api_error.APIError
-			if pqErr.Code[:2] == "23" {
-				apiErr = api_error.NewAPIError(http.StatusBadRequest, "invalid input")
-			} else {
-				apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
-			}
 			log.Print("cannot create user, database error: ", pqErr)
-			return nil, apiErr
+			if pqErr.Code[:2] == "23" {
+				return nil, status.Errorf(codes.InvalidArgument, "invalid input: %v", err.Error())
+			}
+			return nil, status.Errorf(codes.Internal, "internal database error: %v", err.Error())
 		}
 		log.Print("cannot create user: ", err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	return &pb.CreateUserResponse{

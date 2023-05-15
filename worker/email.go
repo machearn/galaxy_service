@@ -71,5 +71,7 @@ func (processor *RedisTaskProcessor) ProcessTaskSendVerificationEmail(ctx contex
 		log.Printf("failed to send email: %s", err.Error())
 		return err
 	}
+
+	log.Printf("processed task: type: %s, payload: %s", task.Type(), task.Payload())
 	return nil
 }

@@ -4,23 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"log"
-	"net/http"
 
-	"github.com/machearn/galaxy_service/api_error"
 	"github.com/machearn/galaxy_service/pb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (server *Server) DeleteEntry(ctx context.Context, req *pb.DeleteEntryRequest) (*pb.Empty, error) {
 	err := server.store.DeleteEntry(ctx, req.GetId())
 	if err != nil {
-		var apiErr *api_error.APIError
 		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusBadGateway, "entry not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+			return nil, status.Errorf(codes.InvalidArgument, "entry not found: %v", err.Error())
 		}
 		log.Print("cannot delete entry: ", err)
-		return nil, apiErr
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	return &pb.Empty{}, nil

@@ -4,14 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
 	"github.com/machearn/galaxy_service/util"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -62,16 +62,13 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	user, err := server.store.UpdateMember(ctx, arg)
 	if err != nil {
 		pqErr := err.(*pq.Error)
-		var apiErr *api_error.APIError
-		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusBadRequest, "user not found")
-		} else if pqErr.Code[:2] == "23" {
-			apiErr = api_error.NewAPIError(http.StatusBadRequest, "invalid input")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
-		}
 		log.Print("cannot update item: ", err)
-		return nil, apiErr
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "user not found: %v", err.Error())
+		} else if pqErr.Code[:2] == "23" {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid input: %v", err.Error())
+		}
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	res := pb.UpdateUserResponse{
