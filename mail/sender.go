@@ -30,6 +30,7 @@ func NewGmailSender(name, address, password string) EmailSender {
 }
 
 func (sender *GmailSender) SendEmail(to []string, subject string, body string) error {
+	return nil
 	e := gomail.NewMessage()
 
 	e.SetHeader("From", sender.Address)

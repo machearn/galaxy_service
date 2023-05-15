@@ -4,24 +4,21 @@ import (
 	"context"
 	"database/sql"
 	"log"
-	"net/http"
 
-	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (server *Server) GetItem(ctx context.Context, req *pb.GetItemRequest) (*pb.GetItemResponse, error) {
 	item, err := server.store.GetItem(ctx, req.GetId())
 	if err != nil {
-		var apiErr *api_error.APIError
-		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusNotFound, "item not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
-		}
 		log.Print("cannot get item: ", err)
-		return nil, apiErr
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "item not found: %v", err.Error())
+		}
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	res := pb.GetItemResponse{
@@ -47,14 +44,11 @@ func (server *Server) ListItems(ctx context.Context, req *pb.ListItemsRequest) (
 
 	rows, err := server.store.ListItems(ctx, arg)
 	if err != nil {
-		var apiErr *api_error.APIError
+		log.Print("cannot get item: ", err)
 		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusNotFound, "item not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+			return nil, status.Errorf(codes.NotFound, "item not found: %v", err.Error())
 		}
-		log.Print("cannot list items: ", err)
-		return nil, apiErr
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	var items []*pb.Item

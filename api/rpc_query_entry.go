@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"log"
-	"net/http"
 
-	"github.com/machearn/galaxy_service/api_error"
 	db "github.com/machearn/galaxy_service/db/sqlc"
 	"github.com/machearn/galaxy_service/pb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -17,14 +17,11 @@ func (server *Server) GetEntry(ctx context.Context, req *pb.GetEntryRequest) (*p
 
 	entry, err := server.store.GetEntry(ctx, ID)
 	if err != nil {
-		var apiErr *api_error.APIError
-		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusNotFound, "entry not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
-		}
 		log.Print("failed to get entry: ", err)
-		return nil, apiErr
+		if err == sql.ErrNoRows {
+			return nil, status.Errorf(codes.NotFound, "entry not found: %v", err.Error())
+		}
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	res := pb.GetEntryResponse{
@@ -49,14 +46,11 @@ func (server *Server) ListEntries(ctx context.Context, req *pb.ListEntriesReques
 
 	rows, err := server.store.ListEntries(ctx, arg)
 	if err != nil {
-		var apiErr *api_error.APIError
+		log.Print("failed to get entry: ", err)
 		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusNotFound, "entry not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+			return nil, status.Errorf(codes.NotFound, "entry not found: %v", err.Error())
 		}
-		log.Print("failed to list entries: ", err)
-		return nil, apiErr
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	var entries []*pb.Entry
@@ -87,14 +81,11 @@ func (server *Server) ListEntriesByUser(ctx context.Context, req *pb.ListEntries
 
 	rows, err := server.store.ListEntriesByMember(ctx, arg)
 	if err != nil {
-		var apiErr *api_error.APIError
+		log.Print("failed to get entry: ", err)
 		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusBadRequest, "entry not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+			return nil, status.Errorf(codes.NotFound, "entry not found: %v", err.Error())
 		}
-		log.Print("failed to list entries: ", err)
-		return nil, apiErr
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	var entries []*pb.Entry
@@ -125,14 +116,11 @@ func (server *Server) ListEntriesByItem(ctx context.Context, req *pb.ListEntries
 
 	rows, err := server.store.ListEntriesByItem(ctx, arg)
 	if err != nil {
-		var apiErr *api_error.APIError
+		log.Print("failed to get entry: ", err)
 		if err == sql.ErrNoRows {
-			apiErr = api_error.NewAPIError(http.StatusBadRequest, "entry not found")
-		} else {
-			apiErr = api_error.NewAPIError(http.StatusInternalServerError, "internal error")
+			return nil, status.Errorf(codes.NotFound, "entry not found: %v", err.Error())
 		}
-		log.Print("failed to list entries: ", err)
-		return nil, apiErr
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err.Error())
 	}
 
 	var entries []*pb.Entry
