@@ -32,7 +32,7 @@ func startTestServer(t *testing.T, store db.Store, tokenMaker token.TokenMaker) 
 	pb.RegisterGalaxyServer(grpcServer, server)
 	reflection.Register(grpcServer)
 
-	listener, err := net.Listen("tcp", config.ServerAddress)
+	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	require.NoError(t, err)
 
 	go grpcServer.Serve(listener)

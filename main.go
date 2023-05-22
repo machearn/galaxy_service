@@ -59,12 +59,12 @@ func main() {
 	pb.RegisterGalaxyServer(grpcServer, server)
 	reflection.Register(grpcServer)
 
-	listener, err := net.Listen("tcp", config.ServerAddress)
+	listener, err := net.Listen("tcp", config.GRPCServerAddress)
 	if err != nil {
 		log.Fatal("cannot start server:", err)
 	}
 
-	log.Printf("server listening at %s", config.ServerAddress)
+	log.Printf("server listening at %s", config.GRPCServerAddress)
 
 	err = grpcServer.Serve(listener)
 	if err != nil {
