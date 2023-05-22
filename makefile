@@ -10,6 +10,9 @@ dropdb:
 migrateup:
 	migrate -path db/migration -database "postgres://root:password@localhost:5432/galaxy_club?sslmode=disable" -verbose up
 
+migrateup_aws:
+	migrate -path db/migration -database "postgres://root:BUI7AYlfePgKo4a5vNgC@galaxy.c6t3ctf3tr9f.us-east-2.rds.amazonaws.com:5432/galaxy_club" -verbose up
+
 migratedown:
 	migrate -path db/migration -database "postgres://root:password@localhost:5432/galaxy_club?sslmode=disable" -verbose down
 
