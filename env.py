@@ -29,7 +29,6 @@ def main():
     env['DB_SOURCE'] = get_env_variable('GALAXY_DB_SOURCE')
     env['GRPC_SERVER_ADDRESS'] = get_env_variable('GALAXY_GRPC_SERVER_ADDRESS')
     env['TOKEN_SYMMETRIC_KEY'] = get_env_variable('GALAXY_TOKEN_SYMMETRIC_KEY')
-    env['REDIS_ADDRESS'] = get_env_variable('GALAXY_REDIS_ADDRESS')
     write_env_file('app.env', env)
 
 if __name__ == '__main__':
