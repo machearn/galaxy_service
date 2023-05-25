@@ -73,13 +73,13 @@ func main() {
 }
 
 func RunMigration(url string, dbSource string) error {
-	migrate, err := migrate.New(url, dbSource)
+	migration, err := migrate.New(url, dbSource)
 	if err != nil {
 		log.Printf("failed to create migration: %s", err.Error())
 		return err
 	}
 
-	if err := migrate.Up(); err != nil {
+	if err := migration.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Printf("failed to run migration: %s", err.Error())
 		return err
 	}
