@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: galaxy-service-deployment
+  labels:
+    app: galaxy-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: galaxy-service
+  template:
+    metadata:
+      labels:
+        app: galaxy-service
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        imagePullPolicy: Always
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "redis-cli ping"]
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 500m
+          limits:
+            memory: 256Mi
+            cpu: 1000m
+        ports:
+        - containerPort: 6379
+      - name: galaxy-service
+        image: 083420849671.dkr.ecr.us-east-2.amazonaws.com/galaxy_service:d01b1d7f357075d2655f2ba74daf15016a591e13
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 500m
+          limits:
+            memory: 256Mi
+            cpu: 1000m
+        ports:
+        - containerPort: 50051
