@@ -19,7 +19,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2 # More information on this action can be found below in the 'AWS Credentials' section
       with:
-        role-to-assume: arn:aws:iam::083420849671:role/service-deploy
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
 
     - name: AWS Secrets Manager GitHub Action
@@ -54,5 +55,15 @@ jobs:
         REPOSITORY: galaxy_service
         IMAGE_TAG: ${{ github.sha }}
       run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest .
+          docker push -a $REGISTRY/$REPOSITORY
+
+    - name: Update kubectl config
+      run: aws eks update-kubeconfig --name galaxy --region us-east-2
+        
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f eks/aws-auth.yaml
+        kubectl apply -f eks/deployment.yaml
+        kubectl apply -f eks/service.yaml
+    

@@ -32,7 +32,7 @@ spec:
         ports:
         - containerPort: 6379
       - name: galaxy-service
-        image: 083420849671.dkr.ecr.us-east-2.amazonaws.com/galaxy_service:d01b1d7f357075d2655f2ba74daf15016a591e13
+        image: 083420849671.dkr.ecr.us-east-2.amazonaws.com/galaxy_service:latest
         imagePullPolicy: Always
         resources:
           requests:
